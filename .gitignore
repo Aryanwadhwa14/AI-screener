@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+ENV/
+.venv/
+
+# Testing & Coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment Variables
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+# Candidate Resumes & Private Datasets
+data/*.docx
+data/*.pdf
+data/resumes/
+data/processed/
+docs/analysis/resume_audit_raw.json
+
+# Operating System
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+

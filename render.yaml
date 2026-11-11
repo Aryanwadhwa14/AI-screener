@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: gfi-screener-api
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: backend
+      - key: ENVIRONMENT
+        value: production
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: LLM_PROVIDER
+        value: gemini
+      # Optional: Add your Supabase credentials in Render dashboard
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: STORAGE_BUCKET_NAME
+        value: resumes
+      - key: GEMINI_API_KEY
+        sync: false
+
