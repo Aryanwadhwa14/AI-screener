@@ -18,7 +18,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
   } = useReviewer();
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-zinc-950 text-zinc-100 selection:bg-zinc-800 selection:text-zinc-100">
+    <div className="relative min-h-screen flex flex-col bg-background text-foreground selection:bg-muted selection:text-foreground">
       {/* Top Navigation */}
       <Navbar onOpenUpload={openUploadModal} />
 
@@ -28,14 +28,14 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Minimal Enterprise Footer */}
-      <footer className="border-t border-zinc-800/80 bg-zinc-950/90 py-5 text-xs text-zinc-500">
+      <footer className="border-t bg-card/50 py-5 text-xs text-muted-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-zinc-300">ScreenAI ATS</span>
-            <span className="text-zinc-700">•</span>
+            <span className="font-semibold text-foreground">ScreenAI ATS</span>
+            <span>•</span>
             <span>Intelligent Candidate Screening & Deterministic Evaluation Platform</span>
           </div>
-          <div className="flex items-center gap-4 font-mono text-[11px] text-zinc-500">
+          <div className="flex items-center gap-4 font-mono text-[11px] text-muted-foreground">
             <span>Zero-Hallucination Citations</span>
             <span>•</span>
             <span>Bias-Audited Pipeline</span>

@@ -41,7 +41,7 @@ export default function LCARankingPage() {
   return (
     <div className="space-y-4">
       {/* Position Header Banner */}
-      <Card className="bg-zinc-900/40 border-zinc-800/80">
+      <Card>
         <CardHeader className="p-5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -49,25 +49,25 @@ export default function LCARankingPage() {
                 <Badge variant="secondary" className="font-mono text-[10px]">
                   REQUISITION 01 • ESG & SUSTAINABILITY
                 </Badge>
-                <span className="text-xs font-mono text-zinc-500">Onsite • 2–3 Years Target Experience</span>
+                <span className="text-xs font-mono text-muted-foreground">Onsite • 2–3 Years Target Experience</span>
               </div>
-              <CardTitle className="text-xl text-zinc-100">
+              <CardTitle className="text-xl text-foreground">
                 Sustainability & Life Cycle Assessment (LCA) Specialist
               </CardTitle>
-              <CardDescription className="text-xs text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+              <CardDescription className="text-xs text-muted-foreground mt-1 max-w-3xl leading-relaxed">
                 Requisition requirements: GaBi / SimaPro modeling expertise (35 pts), ISO 14040/14044 conformance (25 pts), professional environmental engineering experience, and Chennai onsite location.
               </CardDescription>
             </div>
 
-            <div className="flex items-center gap-4 bg-zinc-950/80 p-3 rounded-lg border border-zinc-800 shrink-0">
+            <div className="flex items-center gap-4 bg-muted/40 p-3 rounded-lg border shrink-0">
               <div>
-                <span className="text-[10px] uppercase font-mono text-zinc-500 block">Benchmark</span>
-                <span className="text-base font-bold font-mono text-emerald-400">≥ 55.0%</span>
+                <span className="text-[10px] uppercase font-mono text-muted-foreground block">Benchmark</span>
+                <span className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400">≥ 55.0%</span>
               </div>
-              <div className="h-8 w-px bg-zinc-800" />
+              <div className="h-8 w-px bg-border" />
               <div>
-                <span className="text-[10px] uppercase font-mono text-zinc-500 block">Qualified</span>
-                <span className="text-base font-bold font-mono text-zinc-100">{qualifiedCount} / {candidates.length}</span>
+                <span className="text-[10px] uppercase font-mono text-muted-foreground block">Qualified</span>
+                <span className="text-base font-bold font-mono text-foreground">{qualifiedCount} / {candidates.length}</span>
               </div>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function LCARankingPage() {
 
       {/* Candidates Table */}
       {error ? (
-        <div className="p-6 text-center text-rose-400 text-xs rounded-lg border border-rose-900/50 bg-rose-950/20">
+        <div className="p-6 text-center text-destructive text-xs rounded-lg border bg-destructive/10">
           {error}
         </div>
       ) : (

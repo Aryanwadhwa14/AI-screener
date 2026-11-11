@@ -24,9 +24,7 @@ import {
   IconUpload,
   IconBriefcase,
   IconShieldCheck,
-  IconFileText,
   IconAlertCircle,
-  IconCheckCircle,
 } from '@/components/ui/icons';
 
 type DomainFilter = 'ALL' | 'QUALIFIED' | 'LCA' | 'UI_UX' | 'REVIEW';
@@ -101,7 +99,6 @@ export default function HomePage() {
 
   const filteredCandidates = useMemo(() => {
     return candidates.filter((c) => {
-      // Search filter
       const q = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm.trim() ||
@@ -111,7 +108,6 @@ export default function HomePage() {
 
       if (!matchesSearch) return false;
 
-      // Category filter
       if (activeFilter === 'QUALIFIED') {
         return (
           (c.lca_score !== null && c.lca_score >= 55.0) ||
@@ -134,17 +130,17 @@ export default function HomePage() {
   return (
     <div className="space-y-6">
       {/* Top Banner / ATS Overview Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
               Talent Screening & Sourcing Platform
             </span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Candidate Screening Pipeline
           </h1>
-          <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
             Automated resume parsing, deterministic fit scoring, and verifiable evidence provenance across active requisitions.
           </p>
         </div>
@@ -159,69 +155,69 @@ export default function HomePage() {
 
       {/* Metric KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
+        <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
               Screened Pool
             </span>
-            <div className="text-2xl font-bold text-zinc-100 tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-foreground tabular-nums mt-0.5">
               {loading ? '—' : stats.totalCandidates}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+          <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
             47 Active Resumes Parsed
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
+        <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                 Sustainability & LCA
               </span>
               <Badge variant="success">Bench ≥ 55%</Badge>
             </div>
-            <div className="text-2xl font-bold text-emerald-400 tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.lcaQualified}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+          <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
             Environmental Impact Specialists
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
+        <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                 Product & UI/UX
               </span>
               <Badge variant="info">Bench ≥ 50%</Badge>
             </div>
-            <div className="text-2xl font-bold text-blue-400 tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.uiuxQualified}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+          <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
             Design & Usability Specialists
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
+        <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                 Audit Status
               </span>
               <Badge variant={stats.manualReviewRequired > 0 ? 'warning' : 'default'}>
                 {stats.manualReviewRequired > 0 ? 'Review Needed' : '100% Verified'}
               </Badge>
             </div>
-            <div className="text-2xl font-bold text-zinc-100 tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-foreground tabular-nums mt-0.5">
               {loading ? '—' : stats.manualReviewRequired === 0 ? '100%' : `${stats.manualReviewRequired} Flag`}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+          <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
             {stats.manualReviewRequired > 0 ? 'CAND-005 Empty Document' : 'Zero hallucinated quotes'}
           </CardContent>
         </Card>
@@ -230,30 +226,30 @@ export default function HomePage() {
       {/* Active Requisitions / Open Positions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Requisition 1 */}
-        <Card className="bg-zinc-900/30 border-zinc-800/80 flex flex-col justify-between hover:border-zinc-700/80 transition-all">
+        <Card className="flex flex-col justify-between hover:border-foreground/20 transition-all">
           <CardHeader className="p-5 pb-3">
             <div className="flex items-center justify-between mb-2">
               <Badge variant="secondary" className="font-mono text-[10px]">
                 REQUISITION 01 • ESG & SUSTAINABILITY
               </Badge>
-              <span className="text-xs font-mono text-zinc-500">Onsite • 2–3 Yrs Target</span>
+              <span className="text-xs font-mono text-muted-foreground">Onsite • 2–3 Yrs Target</span>
             </div>
-            <CardTitle className="text-base text-zinc-100">
+            <CardTitle className="text-base text-foreground">
               Sustainability & Life Cycle Assessment (LCA) Specialist
             </CardTitle>
-            <CardDescription className="text-xs text-zinc-400 mt-1 leading-relaxed">
+            <CardDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
               Evaluating candidates on GaBi / SimaPro modeling tools, ISO 14040/14044 conformance, and life cycle inventory (LCI) carbon accounting.
             </CardDescription>
             <div className="flex flex-wrap gap-1.5 pt-3">
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">GaBi Modeling</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">SimaPro</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">ISO 14040/44</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">EPD Development</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">GaBi Modeling</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">SimaPro</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">ISO 14040/44</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">EPD Development</span>
             </div>
           </CardHeader>
-          <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
-            <span className="text-xs font-mono text-zinc-400">
-              Qualified Match: <span className="text-emerald-400 font-semibold">{stats.lcaQualified}</span> candidates
+          <CardContent className="p-5 pt-3 border-t flex items-center justify-between">
+            <span className="text-xs font-mono text-muted-foreground">
+              Qualified Match: <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{stats.lcaQualified}</span> candidates
             </span>
             <Link href="/rankings/lca">
               <Button variant="outline" size="sm" className="gap-1">
@@ -265,30 +261,30 @@ export default function HomePage() {
         </Card>
 
         {/* Requisition 2 */}
-        <Card className="bg-zinc-900/30 border-zinc-800/80 flex flex-col justify-between hover:border-zinc-700/80 transition-all">
+        <Card className="flex flex-col justify-between hover:border-foreground/20 transition-all">
           <CardHeader className="p-5 pb-3">
             <div className="flex items-center justify-between mb-2">
               <Badge variant="secondary" className="font-mono text-[10px]">
                 REQUISITION 02 • DESIGN & PRODUCT
               </Badge>
-              <span className="text-xs font-mono text-zinc-500">Remote • 0–1 Yrs Target</span>
+              <span className="text-xs font-mono text-muted-foreground">Remote • 0–1 Yrs Target</span>
             </div>
-            <CardTitle className="text-base text-zinc-100">
+            <CardTitle className="text-base text-foreground">
               Product & UI/UX Design Specialist
             </CardTitle>
-            <CardDescription className="text-xs text-zinc-400 mt-1 leading-relaxed">
+            <CardDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
               Evaluating candidates on Figma prototyping, design system governance, user research methodologies, and cognitive psychology principles.
             </CardDescription>
             <div className="flex flex-wrap gap-1.5 pt-3">
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Figma</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Design Systems</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">User Research</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Wireframing</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Figma</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Design Systems</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">User Research</span>
+              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Wireframing</span>
             </div>
           </CardHeader>
-          <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
-            <span className="text-xs font-mono text-zinc-400">
-              Qualified Match: <span className="text-blue-400 font-semibold">{stats.uiuxQualified}</span> candidates
+          <CardContent className="p-5 pt-3 border-t flex items-center justify-between">
+            <span className="text-xs font-mono text-muted-foreground">
+              Qualified Match: <span className="text-blue-600 dark:text-blue-400 font-semibold">{stats.uiuxQualified}</span> candidates
             </span>
             <Link href="/rankings/uiux">
               <Button variant="outline" size="sm" className="gap-1">
@@ -301,96 +297,81 @@ export default function HomePage() {
       </div>
 
       {/* Candidate Pipeline Data Table */}
-      <Card className="bg-zinc-900/30 border-zinc-800/80">
-        <CardHeader className="p-5 pb-4 border-b border-zinc-800/80">
+      <Card>
+        <CardHeader className="p-5 pb-4 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-sm font-semibold text-zinc-100">
+              <CardTitle className="text-sm font-semibold text-foreground">
                 Applicant Pool & Evaluation Register
               </CardTitle>
-              <CardDescription className="text-xs text-zinc-400 mt-0.5">
+              <CardDescription className="text-xs text-muted-foreground mt-0.5">
                 Click any candidate row to inspect verbatim resume quotes, full criterion scoring breakdown, and raw extraction.
               </CardDescription>
             </div>
 
             {/* Quick Search */}
             <div className="relative w-full sm:w-64">
-              <IconSearch size={14} className="absolute left-3 top-2.5 text-zinc-500" />
+              <IconSearch size={14} className="absolute left-3 top-2.5 text-muted-foreground" />
               <Input
                 placeholder="Search candidates, codes, skills..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 h-8 text-xs bg-zinc-950/80 border-zinc-800"
+                className="pl-9 h-8 text-xs"
               />
             </div>
           </div>
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center gap-1.5 pt-3">
-            <button
+            <Button
+              variant={activeFilter === 'ALL' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter('ALL')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                activeFilter === 'ALL'
-                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
-              }`}
             >
               All Applicants ({candidates.length})
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={activeFilter === 'QUALIFIED' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter('QUALIFIED')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                activeFilter === 'QUALIFIED'
-                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
-              }`}
             >
               Qualified Only ({stats.lcaQualified + stats.uiuxQualified})
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={activeFilter === 'LCA' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter('LCA')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                activeFilter === 'LCA'
-                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
-              }`}
             >
               Sustainability & LCA ({stats.lcaQualified})
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={activeFilter === 'UI_UX' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter('UI_UX')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                activeFilter === 'UI_UX'
-                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
-              }`}
             >
               Product & UI/UX ({stats.uiuxQualified})
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={activeFilter === 'REVIEW' ? 'default' : 'outline'}
+              size="sm"
               onClick={() => setActiveFilter('REVIEW')}
-              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                activeFilter === 'REVIEW'
-                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
-                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
-              }`}
             >
               Audit Required ({stats.manualReviewRequired})
-            </button>
+            </Button>
           </div>
         </CardHeader>
 
         <CardContent className="p-0">
           {loading ? (
-            <div className="py-16 text-center text-zinc-500 font-mono text-xs">
+            <div className="py-16 text-center text-muted-foreground font-mono text-xs">
               Loading screened candidates...
             </div>
           ) : error ? (
-            <div className="py-12 text-center text-rose-400 text-xs">
+            <div className="py-12 text-center text-destructive text-xs">
               {error}
             </div>
           ) : filteredCandidates.length === 0 ? (
-            <div className="py-16 text-center text-zinc-500 text-xs">
+            <div className="py-16 text-center text-muted-foreground text-xs">
               No candidates matching current search or filter.
             </div>
           ) : (
@@ -419,10 +400,10 @@ export default function HomePage() {
                     >
                       {/* Candidate Code & Source File */}
                       <TableCell>
-                        <div className="font-mono font-semibold text-zinc-100">
+                        <div className="font-mono font-semibold text-foreground">
                           {c.candidate_code}
                         </div>
-                        <div className="text-[11px] text-zinc-500 truncate max-w-[140px]" title={c.original_filename}>
+                        <div className="text-[11px] text-muted-foreground truncate max-w-[140px]" title={c.original_filename}>
                           {c.original_filename}
                         </div>
                       </TableCell>
@@ -445,21 +426,21 @@ export default function HomePage() {
                       {/* LCA Score & Bar */}
                       <TableCell>
                         {c.lca_score === null ? (
-                          <span className="font-mono text-zinc-500 text-[11px]">null (failed)</span>
+                          <span className="font-mono text-muted-foreground text-[11px]">null (failed)</span>
                         ) : (
                           <div className="w-28 space-y-1">
                             <div className="flex items-center justify-between text-[11px] font-mono">
-                              <span className={isLcaQualified ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}>
+                              <span className={isLcaQualified ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-muted-foreground'}>
                                 {c.lca_score.toFixed(1)}%
                               </span>
                               {isLcaQualified && (
-                                <span className="text-[10px] text-emerald-500 font-mono">PASS</span>
+                                <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-mono">PASS</span>
                               )}
                             </div>
                             <Progress
                               value={c.lca_score}
-                              className="h-1.5 bg-zinc-800"
-                              indicatorClassName={isLcaQualified ? 'bg-emerald-500' : 'bg-zinc-600'}
+                              className="h-1.5"
+                              indicatorClassName={isLcaQualified ? 'bg-emerald-500' : 'bg-muted-foreground/40'}
                             />
                           </div>
                         )}
@@ -468,21 +449,21 @@ export default function HomePage() {
                       {/* UI/UX Score & Bar */}
                       <TableCell>
                         {c.uiux_score === null ? (
-                          <span className="font-mono text-zinc-500 text-[11px]">null (failed)</span>
+                          <span className="font-mono text-muted-foreground text-[11px]">null (failed)</span>
                         ) : (
                           <div className="w-28 space-y-1">
                             <div className="flex items-center justify-between text-[11px] font-mono">
-                              <span className={isUiuxQualified ? 'text-blue-400 font-semibold' : 'text-zinc-400'}>
+                              <span className={isUiuxQualified ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-muted-foreground'}>
                                 {c.uiux_score.toFixed(1)}%
                               </span>
                               {isUiuxQualified && (
-                                <span className="text-[10px] text-blue-500 font-mono">PASS</span>
+                                <span className="text-[10px] text-blue-600 dark:text-blue-500 font-mono">PASS</span>
                               )}
                             </div>
                             <Progress
                               value={c.uiux_score}
-                              className="h-1.5 bg-zinc-800"
-                              indicatorClassName={isUiuxQualified ? 'bg-blue-500' : 'bg-zinc-600'}
+                              className="h-1.5"
+                              indicatorClassName={isUiuxQualified ? 'bg-blue-500' : 'bg-muted-foreground/40'}
                             />
                           </div>
                         )}
@@ -491,13 +472,13 @@ export default function HomePage() {
                       {/* Provenance Status */}
                       <TableCell>
                         {isReview ? (
-                          <div className="flex items-center gap-1.5 text-amber-400 text-xs">
+                          <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
                             <IconAlertCircle size={13} />
                             <span>Manual Review</span>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-1.5 text-zinc-400 text-xs">
-                            <IconShieldCheck size={13} className="text-emerald-400" />
+                          <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+                            <IconShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" />
                             <span>Verified Citations</span>
                           </div>
                         )}
@@ -505,7 +486,7 @@ export default function HomePage() {
 
                       {/* Action trigger */}
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="gap-1 font-mono text-[11px] text-zinc-400 hover:text-white">
+                        <Button variant="ghost" size="sm" className="gap-1 font-mono text-[11px] text-muted-foreground hover:text-foreground">
                           <span>Inspect</span>
                           <IconChevronRight size={13} />
                         </Button>

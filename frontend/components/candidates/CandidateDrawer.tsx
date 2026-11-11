@@ -14,8 +14,6 @@ import {
   IconAlertCircle,
   IconExternalLink,
   IconShieldCheck,
-  IconBriefcase,
-  IconFileText,
 } from '@/components/ui/icons';
 
 interface CandidateDrawerProps {
@@ -89,19 +87,19 @@ export default function CandidateDrawer({
   };
 
   const getScoreColor = (score: number | null, threshold: number) => {
-    if (score === null || score === undefined) return 'text-zinc-500';
-    if (score >= threshold) return 'text-emerald-400 font-bold';
-    return 'text-zinc-400';
+    if (score === null || score === undefined) return 'text-muted-foreground';
+    if (score >= threshold) return 'text-emerald-600 dark:text-emerald-400 font-bold';
+    return 'text-muted-foreground';
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-3xl h-full bg-zinc-950 border-l border-zinc-800 flex flex-col shadow-2xl text-left overflow-hidden">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-3xl h-full bg-background border-l flex flex-col shadow-2xl text-left overflow-hidden">
         {/* Drawer Header */}
-        <div className="p-5 border-b border-zinc-800/80 bg-zinc-950 flex items-center justify-between shrink-0">
+        <div className="p-5 border-b bg-card flex items-center justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-base font-bold font-mono text-zinc-100 tracking-tight">
+              <h2 className="text-base font-bold font-mono text-foreground tracking-tight">
                 {data ? data.candidate_code : 'Loading...'}
               </h2>
               {data && (
@@ -110,14 +108,14 @@ export default function CandidateDrawer({
                   {data.classification === 'UI_UX' && <Badge variant="info">Product & UI/UX</Badge>}
                   {data.classification === 'BOTH' && <Badge variant="default">Multi-Disciplinary</Badge>}
                   {data.classification === 'NEITHER_OR_UNCERTAIN' && <Badge variant="secondary">Under Benchmark</Badge>}
-                  <span className="text-[11px] font-mono text-zinc-400 px-1.5 py-0.5 rounded border border-zinc-800 bg-zinc-900/60">
+                  <span className="text-[11px] font-mono text-muted-foreground px-1.5 py-0.5 rounded border bg-muted/50">
                     {data.processing_status}
                   </span>
                 </>
               )}
             </div>
             {data?.document?.original_filename && (
-              <p className="text-xs font-mono text-zinc-500 mt-1 truncate max-w-md">
+              <p className="text-xs font-mono text-muted-foreground mt-1 truncate max-w-md">
                 {data.document.original_filename}
               </p>
             )}
@@ -132,51 +130,55 @@ export default function CandidateDrawer({
                 </Button>
               </a>
             )}
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-zinc-400 hover:text-white">
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-muted-foreground hover:text-foreground">
               <IconClose size={16} />
             </Button>
           </div>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-1 px-5 border-b border-zinc-800/80 bg-zinc-900/30 shrink-0 text-xs">
+        <div className="flex items-center gap-1 px-5 border-b bg-muted/30 shrink-0 text-xs">
           <button
             onClick={() => setActiveTab('evaluations')}
-            className={`py-3 px-3 font-medium border-b-2 transition-all ${activeTab === 'evaluations'
-                ? 'border-zinc-100 text-zinc-100'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200'
-              }`}
+            className={`py-3 px-3 font-medium border-b-2 transition-all ${
+              activeTab === 'evaluations'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
           >
             Requisition Scoring & Evidence
           </button>
           <button
             onClick={() => setActiveTab('profile')}
-            className={`py-3 px-3 font-medium border-b-2 transition-all ${activeTab === 'profile'
-                ? 'border-zinc-100 text-zinc-100'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200'
-              }`}
+            className={`py-3 px-3 font-medium border-b-2 transition-all ${
+              activeTab === 'profile'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
           >
             Structured Profile
           </button>
           <button
             onClick={() => setActiveTab('document')}
-            className={`py-3 px-3 font-medium border-b-2 transition-all ${activeTab === 'document'
-                ? 'border-zinc-100 text-zinc-100'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200'
-              }`}
+            className={`py-3 px-3 font-medium border-b-2 transition-all ${
+              activeTab === 'document'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
           >
             Source Resume Text
           </button>
           <button
             onClick={() => setActiveTab('audit')}
-            className={`py-3 px-3 font-medium border-b-2 transition-all ${activeTab === 'audit'
-                ? 'border-zinc-100 text-zinc-100'
-                : 'border-transparent text-zinc-400 hover:text-zinc-200'
-              }`}
+            className={`py-3 px-3 font-medium border-b-2 transition-all ${
+              activeTab === 'audit'
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
           >
             Audit & Confidence
             {data && data.warnings.length > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-300 font-mono">
+              <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-mono">
                 {data.warnings.length}
               </span>
             )}
@@ -187,12 +189,12 @@ export default function CandidateDrawer({
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           {loading && (
             <div className="flex flex-col items-center justify-center py-20 gap-2">
-              <span className="text-xs text-zinc-500 font-mono">Loading dossier...</span>
+              <span className="text-xs text-muted-foreground font-mono">Loading dossier...</span>
             </div>
           )}
 
           {error && (
-            <div className="p-3 rounded-md bg-rose-950/40 border border-rose-900/60 text-xs text-rose-300">
+            <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-xs text-destructive">
               {error}
             </div>
           )}
@@ -206,16 +208,17 @@ export default function CandidateDrawer({
                   <div className="grid grid-cols-2 gap-3">
                     <div
                       onClick={() => setActiveRoleEvaluation('LCA')}
-                      className={`cursor-pointer p-3.5 rounded-lg border transition-all ${activeRoleEvaluation === 'LCA'
-                          ? 'border-zinc-300 bg-zinc-900/90 shadow-sm'
-                          : 'border-zinc-800/80 bg-zinc-950/60 hover:border-zinc-700'
-                        }`}
+                      className={`cursor-pointer p-3.5 rounded-lg border transition-all ${
+                        activeRoleEvaluation === 'LCA'
+                          ? 'border-primary bg-muted/60 shadow-sm'
+                          : 'bg-card hover:bg-muted/30'
+                      }`}
                     >
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-mono uppercase text-zinc-400">Requisition 01</span>
-                        <span className="text-zinc-500 font-mono">Bench ≥ 55%</span>
+                        <span className="font-mono uppercase text-muted-foreground">Requisition 01</span>
+                        <span className="text-muted-foreground font-mono">Bench ≥ 55%</span>
                       </div>
-                      <div className="text-xs font-semibold text-zinc-200 mt-1">
+                      <div className="text-xs font-semibold text-foreground mt-1">
                         Sustainability & LCA Specialist
                       </div>
                       <div className="flex items-baseline gap-2 mt-2">
@@ -230,16 +233,17 @@ export default function CandidateDrawer({
 
                     <div
                       onClick={() => setActiveRoleEvaluation('UI_UX')}
-                      className={`cursor-pointer p-3.5 rounded-lg border transition-all ${activeRoleEvaluation === 'UI_UX'
-                          ? 'border-zinc-300 bg-zinc-900/90 shadow-sm'
-                          : 'border-zinc-800/80 bg-zinc-950/60 hover:border-zinc-700'
-                        }`}
+                      className={`cursor-pointer p-3.5 rounded-lg border transition-all ${
+                        activeRoleEvaluation === 'UI_UX'
+                          ? 'border-primary bg-muted/60 shadow-sm'
+                          : 'bg-card hover:bg-muted/30'
+                      }`}
                     >
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="font-mono uppercase text-zinc-400">Requisition 02</span>
-                        <span className="text-zinc-500 font-mono">Bench ≥ 50%</span>
+                        <span className="font-mono uppercase text-muted-foreground">Requisition 02</span>
+                        <span className="text-muted-foreground font-mono">Bench ≥ 50%</span>
                       </div>
-                      <div className="text-xs font-semibold text-zinc-200 mt-1">
+                      <div className="text-xs font-semibold text-foreground mt-1">
                         Product & UI/UX Design Specialist
                       </div>
                       <div className="flex items-baseline gap-2 mt-2">
@@ -259,7 +263,7 @@ export default function CandidateDrawer({
                       activeRoleEvaluation === 'LCA' ? data.lca_evaluation : data.uiux_evaluation;
                     if (!evalObj) {
                       return (
-                        <div className="p-8 text-center rounded-lg border border-zinc-800 bg-zinc-950/40 text-zinc-500 text-xs">
+                        <div className="p-8 text-center rounded-lg border bg-muted/20 text-muted-foreground text-xs">
                           Evaluation data not available for this requisition.
                         </div>
                       );
@@ -267,19 +271,19 @@ export default function CandidateDrawer({
 
                     return (
                       <div className="space-y-3">
-                        <div className="p-3.5 rounded-lg bg-zinc-900/30 border border-zinc-800/80 space-y-1">
+                        <div className="p-3.5 rounded-lg bg-card border space-y-1">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="font-semibold text-zinc-200">Evaluation Summary</span>
-                            <span className="text-[11px] font-mono text-zinc-500">Engine: {evalObj.scoring_version}</span>
+                            <span className="font-semibold text-foreground">Evaluation Summary</span>
+                            <span className="text-[11px] font-mono text-muted-foreground">Engine: {evalObj.scoring_version}</span>
                           </div>
-                          <p className="text-xs text-zinc-400 leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             {evalObj.summary || 'Computed deterministically from verified source evidence.'}
                           </p>
                         </div>
 
                         {/* Breakdown List */}
                         <div className="space-y-2">
-                          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 block">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground block">
                             Criterion-by-Criterion Scoring & Evidence Provenance
                           </span>
 
@@ -288,33 +292,33 @@ export default function CandidateDrawer({
                             return (
                               <div
                                 key={crit.criterion_key}
-                                className="p-3.5 rounded-lg bg-zinc-900/30 border border-zinc-800/80 space-y-1.5"
+                                className="p-3.5 rounded-lg bg-card border space-y-1.5"
                               >
                                 <div className="flex items-center justify-between text-xs">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-medium text-zinc-200">{crit.criterion_name}</span>
-                                    <span className="text-[11px] font-mono text-zinc-500">({crit.weight} pts)</span>
+                                    <span className="font-medium text-foreground">{crit.criterion_name}</span>
+                                    <span className="text-[11px] font-mono text-muted-foreground">({crit.weight} pts)</span>
                                   </div>
                                   <div className="flex items-center gap-3 font-mono text-xs">
-                                    <span className="text-zinc-400">{crit.score}/100</span>
-                                    <span className="font-bold text-emerald-400">+{weightedContrib} pts</span>
+                                    <span className="text-muted-foreground">{crit.score}/100</span>
+                                    <span className="font-bold text-emerald-600 dark:text-emerald-400">+{weightedContrib} pts</span>
                                   </div>
                                 </div>
 
                                 {crit.notes && (
-                                  <p className="text-[11px] text-zinc-400 leading-relaxed">{crit.notes}</p>
+                                  <p className="text-[11px] text-muted-foreground leading-relaxed">{crit.notes}</p>
                                 )}
 
                                 {/* Cited Evidence Snippets */}
                                 {crit.evidence && crit.evidence.length > 0 && (
-                                  <div className="mt-2 pt-2 border-t border-zinc-800/60 space-y-1.5">
-                                    <span className="text-[10px] font-mono uppercase text-zinc-500 block">
+                                  <div className="mt-2 pt-2 border-t space-y-1.5">
+                                    <span className="text-[10px] font-mono uppercase text-muted-foreground block">
                                       Verbatim Source Citation (Physical Provenance):
                                     </span>
                                     {crit.evidence.map((snip, idx) => (
                                       <div
                                         key={idx}
-                                        className="text-xs font-mono text-zinc-300 bg-zinc-950/80 border-l-2 border-emerald-500 px-3 py-2 rounded-r-md flex items-start gap-1.5"
+                                        className="text-xs font-mono text-foreground bg-muted/60 border-l-2 border-emerald-500 px-3 py-2 rounded-r-md flex items-start gap-1.5"
                                       >
                                         <span className="break-words italic">"{snip}"</span>
                                       </div>
@@ -338,53 +342,53 @@ export default function CandidateDrawer({
                     <>
                       {/* Metric Row */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/80">
-                          <span className="text-[10px] font-mono uppercase text-zinc-500 block">Total Experience</span>
-                          <span className="text-base font-bold font-mono text-zinc-200 mt-0.5 block">
+                        <div className="p-3 rounded-lg bg-card border">
+                          <span className="text-[10px] font-mono uppercase text-muted-foreground block">Total Experience</span>
+                          <span className="text-base font-bold font-mono text-foreground mt-0.5 block">
                             {data.profile.total_years_experience !== null
                               ? `${data.profile.total_years_experience} Years`
                               : 'Unknown'}
                           </span>
                         </div>
-                        <div className="p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/80">
-                          <span className="text-[10px] font-mono uppercase text-zinc-500 block">Relocation Status</span>
-                          <span className="text-xs font-mono font-semibold text-zinc-300 mt-1 block">
+                        <div className="p-3 rounded-lg bg-card border">
+                          <span className="text-[10px] font-mono uppercase text-muted-foreground block">Relocation Status</span>
+                          <span className="text-xs font-mono font-semibold text-foreground mt-1 block">
                             {data.profile.relocation_willingness || 'UNKNOWN'}
                           </span>
                         </div>
-                        <div className="p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/80">
-                          <span className="text-[10px] font-mono uppercase text-zinc-500 block">Extraction Confidence</span>
-                          <span className="text-base font-bold font-mono text-emerald-400 mt-0.5 block">
+                        <div className="p-3 rounded-lg bg-card border">
+                          <span className="text-[10px] font-mono uppercase text-muted-foreground block">Extraction Confidence</span>
+                          <span className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5 block">
                             {(data.profile.extraction_confidence * 100).toFixed(0)}%
                           </span>
                         </div>
                       </div>
 
                       {/* Tools & Skills */}
-                      <div className="p-4 rounded-lg bg-zinc-900/30 border border-zinc-800/80 space-y-3">
+                      <div className="p-4 rounded-lg bg-card border space-y-3">
                         <div>
-                          <span className="text-[11px] font-mono uppercase text-zinc-400 font-semibold block mb-2">
+                          <span className="text-[11px] font-mono uppercase text-muted-foreground font-semibold block mb-2">
                             Extracted Tools & Technologies
                           </span>
                           <div className="flex flex-wrap gap-1">
                             {data.profile.tools_and_technologies.map((t, idx) => (
-                              <span key={idx} className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-xs font-mono text-zinc-200">
+                              <span key={idx} className="px-2 py-0.5 rounded bg-muted border text-xs font-mono text-foreground">
                                 {t}
                               </span>
                             ))}
                             {data.profile.tools_and_technologies.length === 0 && (
-                              <span className="text-xs text-zinc-500">None extracted</span>
+                              <span className="text-xs text-muted-foreground">None extracted</span>
                             )}
                           </div>
                         </div>
 
                         <div>
-                          <span className="text-[11px] font-mono uppercase text-zinc-400 font-semibold block mb-2">
+                          <span className="text-[11px] font-mono uppercase text-muted-foreground font-semibold block mb-2">
                             Skills & Domains
                           </span>
                           <div className="flex flex-wrap gap-1">
                             {data.profile.skills.map((s, idx) => (
-                              <span key={idx} className="px-2 py-0.5 rounded bg-zinc-900/60 border border-zinc-800 text-[11px] text-zinc-300">
+                              <span key={idx} className="px-2 py-0.5 rounded bg-muted/60 border text-[11px] text-muted-foreground">
                                 {s}
                               </span>
                             ))}
@@ -394,20 +398,20 @@ export default function CandidateDrawer({
 
                       {/* Work Experience */}
                       <div className="space-y-2">
-                        <span className="text-[11px] font-mono uppercase text-zinc-500 block">Employment History</span>
+                        <span className="text-[11px] font-mono uppercase text-muted-foreground block">Employment History</span>
                         {data.profile.work_experience.map((exp, idx) => (
-                          <div key={idx} className="p-3.5 rounded-lg bg-zinc-900/30 border border-zinc-800/80 space-y-1.5">
+                          <div key={idx} className="p-3.5 rounded-lg bg-card border space-y-1.5">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="font-semibold text-zinc-100">{exp.role_title}</span>
-                              <span className="font-mono text-zinc-500 text-[11px]">
+                              <span className="font-semibold text-foreground">{exp.role_title}</span>
+                              <span className="font-mono text-muted-foreground text-[11px]">
                                 {exp.start_date || 'N/A'} — {exp.is_current ? 'Present' : exp.end_date || 'N/A'}
                               </span>
                             </div>
                             {exp.company_or_org && (
-                              <p className="text-xs text-zinc-300">{exp.company_or_org}</p>
+                              <p className="text-xs text-foreground/80">{exp.company_or_org}</p>
                             )}
                             {exp.responsibilities && exp.responsibilities.length > 0 && (
-                              <ul className="list-disc list-inside text-xs text-zinc-400 space-y-0.5 pt-1">
+                              <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5 pt-1">
                                 {exp.responsibilities.map((r, rIdx) => (
                                   <li key={rIdx}>{r}</li>
                                 ))}
@@ -419,17 +423,17 @@ export default function CandidateDrawer({
 
                       {/* Education */}
                       <div className="space-y-2">
-                        <span className="text-[11px] font-mono uppercase text-zinc-500 block">Education</span>
+                        <span className="text-[11px] font-mono uppercase text-muted-foreground block">Education</span>
                         {data.profile.education.map((edu, idx) => (
-                          <div key={idx} className="p-3 rounded-lg bg-zinc-900/30 border border-zinc-800/80 flex justify-between items-center text-xs">
+                          <div key={idx} className="p-3 rounded-lg bg-card border flex justify-between items-center text-xs">
                             <div>
-                              <span className="font-medium text-zinc-200 block">
+                              <span className="font-medium text-foreground block">
                                 {edu.degree || 'Degree'} {edu.field_of_study ? `in ${edu.field_of_study}` : ''}
                               </span>
-                              <span className="text-[11px] text-zinc-500">{edu.institution || 'Unknown Institution'}</span>
+                              <span className="text-[11px] text-muted-foreground">{edu.institution || 'Unknown Institution'}</span>
                             </div>
                             {edu.graduation_year && (
-                              <span className="font-mono text-zinc-400">{edu.graduation_year}</span>
+                              <span className="font-mono text-muted-foreground">{edu.graduation_year}</span>
                             )}
                           </div>
                         ))}
@@ -437,8 +441,8 @@ export default function CandidateDrawer({
 
                       {/* Portfolio Links */}
                       {data.profile.portfolio_links.length > 0 && (
-                        <div className="p-3.5 rounded-lg bg-zinc-900/30 border border-zinc-800/80 space-y-1.5">
-                          <span className="text-[11px] font-mono uppercase text-zinc-400 font-semibold block">Portfolio Deliverables</span>
+                        <div className="p-3.5 rounded-lg bg-card border space-y-1.5">
+                          <span className="text-[11px] font-mono uppercase text-muted-foreground font-semibold block">Portfolio Deliverables</span>
                           <div className="space-y-1">
                             {data.profile.portfolio_links.map((link, idx) => (
                               <a
@@ -446,7 +450,7 @@ export default function CandidateDrawer({
                                 href={link}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-xs font-mono text-blue-400 hover:underline flex items-center gap-1 truncate"
+                                className="text-xs font-mono text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 truncate"
                               >
                                 <IconExternalLink size={12} />
                                 <span>{link}</span>
@@ -457,7 +461,7 @@ export default function CandidateDrawer({
                       )}
                     </>
                   ) : (
-                    <div className="p-8 text-center rounded-lg border border-zinc-800 text-zinc-500 text-xs">
+                    <div className="p-8 text-center rounded-lg border text-muted-foreground text-xs">
                       Structured profile is not yet extracted for this candidate.
                     </div>
                   )}
@@ -467,34 +471,36 @@ export default function CandidateDrawer({
               {/* TAB 3: Source Resume Text */}
               {activeTab === 'document' && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/30 border border-zinc-800/80 text-xs">
-                    <span className="font-mono text-zinc-400">
+                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-card border text-xs">
+                    <span className="font-mono text-muted-foreground">
                       Parser: {data.extracted_text.parser_name || 'N/A'} • Size: {(data.document.file_size / 1024).toFixed(1)} KB
                     </span>
 
-                    <div className="flex items-center gap-1 border border-zinc-800 rounded p-0.5 bg-zinc-950">
+                    <div className="flex items-center gap-1 border rounded p-0.5 bg-muted">
                       <button
                         onClick={() => setTextViewMode('normalized')}
-                        className={`px-2.5 py-0.5 rounded text-[11px] transition-colors ${textViewMode === 'normalized'
-                            ? 'bg-zinc-800 text-white font-medium'
-                            : 'text-zinc-400 hover:text-white'
-                          }`}
+                        className={`px-2.5 py-0.5 rounded text-[11px] transition-colors ${
+                          textViewMode === 'normalized'
+                            ? 'bg-background text-foreground font-medium shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
                       >
                         Normalized Text
                       </button>
                       <button
                         onClick={() => setTextViewMode('raw')}
-                        className={`px-2.5 py-0.5 rounded text-[11px] transition-colors ${textViewMode === 'raw'
-                            ? 'bg-zinc-800 text-white font-medium'
-                            : 'text-zinc-400 hover:text-white'
-                          }`}
+                        className={`px-2.5 py-0.5 rounded text-[11px] transition-colors ${
+                          textViewMode === 'raw'
+                            ? 'bg-background text-foreground font-medium shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
                       >
                         Raw Extracted
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-lg bg-zinc-950 border border-zinc-800 font-mono text-[11px] text-zinc-400 max-h-[460px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text">
+                  <div className="p-4 rounded-lg bg-muted/40 border font-mono text-[11px] text-foreground/80 max-h-[460px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text">
                     {textViewMode === 'normalized'
                       ? data.extracted_text.normalized_text || '(Empty text)'
                       : data.extracted_text.raw_text || '(Empty text)'}
@@ -505,45 +511,45 @@ export default function CandidateDrawer({
               {/* TAB 4: Audit & Warnings */}
               {activeTab === 'audit' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-zinc-900/30 border border-zinc-800/80 flex items-center justify-between">
+                  <div className="p-4 rounded-lg bg-card border flex items-center justify-between">
                     <div>
-                      <h4 className="text-xs font-semibold text-zinc-100">Extraction Confidence Score</h4>
-                      <p className="text-[11px] text-zinc-400">Reflects verified physical text density against unverified claims</p>
+                      <h4 className="text-xs font-semibold text-foreground">Extraction Confidence Score</h4>
+                      <p className="text-[11px] text-muted-foreground">Reflects verified physical text density against unverified claims</p>
                     </div>
-                    <span className="text-xl font-bold font-mono text-emerald-400">
+                    <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400">
                       {((data.profile?.extraction_confidence ?? 1.0) * 100).toFixed(0)}%
                     </span>
                   </div>
 
                   {data.warnings && data.warnings.length > 0 ? (
                     <div className="space-y-2">
-                      <span className="text-[11px] font-mono uppercase text-amber-400 block font-semibold">Parser Warnings</span>
+                      <span className="text-[11px] font-mono uppercase text-amber-600 dark:text-amber-400 block font-semibold">Parser Warnings</span>
                       {data.warnings.map((w, idx) => (
-                        <div key={idx} className="p-3 rounded-lg bg-amber-950/20 border border-amber-900/40 text-xs text-amber-300 flex items-start gap-2">
-                          <IconAlertCircle size={14} className="shrink-0 mt-0.5 text-amber-400" />
+                        <div key={idx} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                          <IconAlertCircle size={14} className="shrink-0 mt-0.5 text-amber-500" />
                           <span>{w}</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="p-3.5 rounded-lg bg-emerald-950/20 border border-emerald-900/40 text-xs text-emerald-300 flex items-center gap-2">
-                      <IconCheckCircle size={14} className="text-emerald-400" />
+                    <div className="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                      <IconCheckCircle size={14} className="text-emerald-500" />
                       <span>Zero parser warnings or extraction flags recorded for this candidate.</span>
                     </div>
                   )}
 
                   {data.profile?.unsupported_claims && data.profile.unsupported_claims.length > 0 && (
                     <div className="space-y-2 pt-2">
-                      <span className="text-[11px] font-mono uppercase text-rose-400 block font-semibold">Unsupported Extracted Claims</span>
+                      <span className="text-[11px] font-mono uppercase text-destructive block font-semibold">Unsupported Extracted Claims</span>
                       {data.profile.unsupported_claims.map((claim, idx) => (
-                        <div key={idx} className="p-2.5 rounded bg-rose-950/20 border border-rose-900/40 text-xs text-rose-300 font-mono">
+                        <div key={idx} className="p-2.5 rounded bg-destructive/10 border border-destructive/20 text-xs text-destructive font-mono">
                           {claim}
                         </div>
                       ))}
                     </div>
                   )}
 
-                  <div className="pt-3 border-t border-zinc-800 flex justify-end">
+                  <div className="pt-3 border-t flex justify-end">
                     <Button
                       variant="secondary"
                       size="sm"

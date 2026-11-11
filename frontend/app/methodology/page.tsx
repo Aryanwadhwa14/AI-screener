@@ -9,15 +9,15 @@ export default function MethodologyPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card className="bg-zinc-900/40 border-zinc-800/80">
+      <Card>
         <CardHeader className="p-6">
           <Badge variant="secondary" className="font-mono text-[10px] w-fit mb-2">
             AI GOVERNANCE & EVALUATION ENGINE
           </Badge>
-          <CardTitle className="text-2xl text-zinc-100">
+          <CardTitle className="text-2xl text-foreground">
             Screening Engine & Verification Architecture
           </CardTitle>
-          <CardDescription className="text-xs text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+          <CardDescription className="text-xs text-muted-foreground mt-1 max-w-3xl leading-relaxed">
             Every candidate evaluation is computed deterministically from verified resume text. The system enforces strict provenance checking: unverified claims are rejected, and scoring formulas are executed via versioned, auditable Python algorithms.
           </CardDescription>
         </CardHeader>
@@ -25,32 +25,32 @@ export default function MethodologyPage() {
 
       {/* Core Architectural Guarantees */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 block font-semibold">
+        <Card className="p-4 space-y-2 hover:border-foreground/20 transition-colors">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block font-semibold">
             Deterministic Engine
           </span>
-          <h4 className="text-sm font-semibold text-zinc-100">Zero Non-Deterministic Drift</h4>
-          <p className="text-xs text-zinc-400 leading-relaxed">
+          <h4 className="text-sm font-semibold text-foreground">Zero Non-Deterministic Drift</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Candidate extraction is validated with regex and string tokenization; scoring arithmetic is executed strictly in Python. Identical resume content yields an identical score and rank every single run.
           </p>
         </Card>
 
-        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-blue-400 block font-semibold">
+        <Card className="p-4 space-y-2 hover:border-foreground/20 transition-colors">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-blue-600 dark:text-blue-400 block font-semibold">
             Verbatim Verification
           </span>
-          <h4 className="text-sm font-semibold text-zinc-100">Zero Hallucination Guarantee</h4>
-          <p className="text-xs text-zinc-400 leading-relaxed">
+          <h4 className="text-sm font-semibold text-foreground">Zero Hallucination Guarantee</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Every skill and experience claim cited in a candidate dossier must exist verbatim in the source document. Any unverified citation is automatically pruned and reduces extraction confidence.
           </p>
         </Card>
 
-        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
-          <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400 block font-semibold">
+        <Card className="p-4 space-y-2 hover:border-foreground/20 transition-colors">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 block font-semibold">
             Fairness & Audit
           </span>
-          <h4 className="text-sm font-semibold text-zinc-100">Demographic Bias Immunity</h4>
-          <p className="text-xs text-zinc-400 leading-relaxed">
+          <h4 className="text-sm font-semibold text-foreground">Demographic Bias Immunity</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Candidate evaluations exclude demographic indicators (gender, age, ethnicity, photos). Empty or unreadable files produce an explicit null score with manual-review status rather than an arbitrary 0.
           </p>
         </Card>
@@ -59,11 +59,11 @@ export default function MethodologyPage() {
       {/* Requisition Evaluation Criteria Grids */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Requisition 1 */}
-        <Card className="bg-zinc-900/30 border-zinc-800/80 p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <span className="text-[10px] uppercase font-mono font-bold text-emerald-400">Requisition 01</span>
-              <h3 className="text-sm font-bold text-zinc-100">Sustainability & LCA Specialist (100 Pts Max)</h3>
+              <span className="text-[10px] uppercase font-mono font-bold text-emerald-600 dark:text-emerald-400">Requisition 01</span>
+              <h3 className="text-sm font-bold text-foreground">Sustainability & LCA Specialist (100 Pts Max)</h3>
             </div>
             <Badge variant="success">Benchmark ≥ 55%</Badge>
           </div>
@@ -101,23 +101,23 @@ export default function MethodologyPage() {
                 desc: 'Willingness to relocate to Chennai or current residence in Tamil Nadu. Unknown values default neutrally to 2/5 pts.',
               },
             ].map((c, i) => (
-              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-zinc-950/60 border border-zinc-800/60">
+              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-muted/40 border">
                 <div className="pr-3">
-                  <div className="text-xs font-semibold text-zinc-200">{c.name}</div>
-                  <div className="text-[11px] text-zinc-500 mt-0.5">{c.desc}</div>
+                  <div className="text-xs font-semibold text-foreground">{c.name}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{c.desc}</div>
                 </div>
-                <span className="font-mono text-xs font-bold text-emerald-400 shrink-0">{c.weight}</span>
+                <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">{c.weight}</span>
               </div>
             ))}
           </div>
         </Card>
 
         {/* Requisition 2 */}
-        <Card className="bg-zinc-900/30 border-zinc-800/80 p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+        <Card className="p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b">
             <div>
-              <span className="text-[10px] uppercase font-mono font-bold text-blue-400">Requisition 02</span>
-              <h3 className="text-sm font-bold text-zinc-100">Product & UI/UX Design Specialist (100 Pts Max)</h3>
+              <span className="text-[10px] uppercase font-mono font-bold text-blue-600 dark:text-blue-400">Requisition 02</span>
+              <h3 className="text-sm font-bold text-foreground">Product & UI/UX Design Specialist (100 Pts Max)</h3>
             </div>
             <Badge variant="info">Benchmark ≥ 50%</Badge>
           </div>
@@ -150,12 +150,12 @@ export default function MethodologyPage() {
                 desc: 'Studies in Design, Cognitive Science, Computer Science, Human-Computer Interaction, or related.',
               },
             ].map((c, i) => (
-              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-zinc-950/60 border border-zinc-800/60">
+              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-muted/40 border">
                 <div className="pr-3">
-                  <div className="text-xs font-semibold text-zinc-200">{c.name}</div>
-                  <div className="text-[11px] text-zinc-500 mt-0.5">{c.desc}</div>
+                  <div className="text-xs font-semibold text-foreground">{c.name}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{c.desc}</div>
                 </div>
-                <span className="font-mono text-xs font-bold text-blue-400 shrink-0">{c.weight}</span>
+                <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 shrink-0">{c.weight}</span>
               </div>
             ))}
           </div>
@@ -163,9 +163,9 @@ export default function MethodologyPage() {
       </div>
 
       {/* 5-Tier Deterministic Tie-Breaking Protocol */}
-      <Card className="bg-zinc-900/30 border-zinc-800/80 p-5">
-        <h3 className="text-sm font-semibold text-zinc-100 mb-2">5-Tier Deterministic Tie-Breaking Protocol</h3>
-        <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
+      <Card className="p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-2">5-Tier Deterministic Tie-Breaking Protocol</h3>
+        <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
           When two or more candidates receive identical total scores, the screening engine breaks ties deterministically without randomness:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
@@ -176,12 +176,12 @@ export default function MethodologyPage() {
             { step: '4', title: 'Evidence Snippets', desc: 'Candidate with greater count of verified physical citations.' },
             { step: '5', title: 'Candidate Code', desc: 'Alphabetical deterministic sort by candidate ID (e.g. CAND-014 < CAND-017).' },
           ].map((tier, i) => (
-            <div key={i} className="p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 text-center">
-              <span className="inline-block w-5 h-5 rounded-full bg-zinc-800 text-[10px] font-mono font-bold text-zinc-300 mb-1.5">
+            <div key={i} className="p-3 rounded-lg bg-muted/40 border text-center">
+              <span className="inline-block w-5 h-5 rounded-full bg-secondary text-[10px] font-mono font-bold text-secondary-foreground mb-1.5">
                 {tier.step}
               </span>
-              <div className="text-xs font-semibold text-zinc-200 mb-1">{tier.title}</div>
-              <div className="text-[10px] text-zinc-500 leading-normal">{tier.desc}</div>
+              <div className="text-xs font-semibold text-foreground mb-1">{tier.title}</div>
+              <div className="text-[10px] text-muted-foreground leading-normal">{tier.desc}</div>
             </div>
           ))}
         </div>
