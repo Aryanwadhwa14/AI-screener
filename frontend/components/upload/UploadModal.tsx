@@ -3,6 +3,9 @@
 import React, { useState, useRef } from 'react';
 import { api } from '@/lib/api';
 import { UploadResponse } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { IconUpload, IconClose, IconCheck, IconAlertCircle } from '@/components/ui/icons';
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -40,7 +43,7 @@ export default function UploadModal({
   const validateFile = (file: File): string | null => {
     const ext = file.name.split('.').pop()?.toLowerCase();
     if (ext !== 'pdf' && ext !== 'docx') {
-      return 'Only PDF and DOCX documents are supported.';
+      return 'Supported formats: PDF or DOCX only.';
     }
     const maxSizeBytes = 15 * 1024 * 1024;
     if (file.size > maxSizeBytes) {
@@ -106,28 +109,24 @@ export default function UploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg rounded-xl border border-[#1f1f28] bg-[#0d0d11] p-6 shadow-2xl text-left">
+      <div className="relative w-full max-w-lg rounded-xl border border-zinc-800 bg-[#0d0e11] p-6 shadow-2xl text-left">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#1f1f28]">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-[#FF5729]/15 flex items-center justify-center text-[#FF5729]">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-            </div>
-            <h3 className="text-base font-semibold text-white">Upload Candidate Resume</h3>
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+          <div>
+            <h3 className="text-sm font-semibold text-white">Upload Candidate Resume</h3>
+            <p className="text-xs text-zinc-400 mt-0.5">Ingest PDF or DOCX file into the dual-role evaluation pipeline</p>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => {
               resetState();
               onClose();
             }}
-            className="text-[#8B8D98] hover:text-white p-1 rounded-md hover:bg-[#14141a] transition-colors"
+            className="h-7 w-7 text-zinc-400 hover:text-white"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            <IconClose size={15} />
+          </Button>
         </div>
 
         {/* Content */}
@@ -140,12 +139,12 @@ export default function UploadModal({
               onDragLeave={handleDrag}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${
+              className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${
                 dragActive
                   ? 'border-[#FF5729] bg-[#FF5729]/5'
                   : selectedFile
-                  ? 'border-emerald-500/50 bg-[#08120d]'
-                  : 'border-[#1f1f28] hover:border-[#3d3d4e] bg-[#0a0a0e]'
+                  ? 'border-emerald-800/80 bg-emerald-950/20'
+                  : 'border-zinc-800 hover:border-zinc-700 bg-zinc-950/60'
               }`}
             >
               <input
@@ -157,138 +156,121 @@ export default function UploadModal({
               />
 
               {selectedFile ? (
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className="w-8 h-8 rounded-full bg-emerald-950/60 text-emerald-400 flex items-center justify-center">
+                    <IconCheck size={16} />
                   </div>
-                  <span className="text-sm font-medium text-white truncate max-w-xs">
+                  <span className="text-xs font-mono font-medium text-white truncate max-w-xs">
                     {selectedFile.name}
                   </span>
-                  <span className="text-xs text-[#8B8D98]">
+                  <span className="text-[11px] text-zinc-500 font-mono">
                     {(selectedFile.size / 1024).toFixed(1)} KB • Click to choose different file
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-[#14141a] text-[#8B8D98] flex items-center justify-center">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
+                  <div className="w-8 h-8 rounded-full bg-zinc-900 text-zinc-400 flex items-center justify-center">
+                    <IconUpload size={16} />
                   </div>
-                  <p className="text-sm text-white font-medium">
-                    Drag and drop resume here, or <span className="text-[#FF5729]">browse</span>
+                  <p className="text-xs text-zinc-200">
+                    Drag and drop resume here, or <span className="text-[#FF5729] font-medium">browse</span>
                   </p>
-                  <p className="text-xs text-[#8B8D98]">
-                    Supported formats: PDF, DOCX (Max 15MB)
+                  <p className="text-[11px] text-zinc-500">
+                    Supports DOCX and PDF (Max 15MB)
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Auto-process option */}
-            <div className="flex items-center gap-3 p-3 rounded-md bg-[#0a0a0e] border border-[#1f1f28]">
+            {/* Auto-process Toggle */}
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-950/60 border border-zinc-800">
               <input
                 id="autoProcess"
                 type="checkbox"
                 checked={autoProcess}
                 onChange={(e) => setAutoProcess(e.target.checked)}
-                className="rounded border-[#272733] bg-[#14141a] text-[#FF5729] focus:ring-[#FF5729]/20"
+                className="rounded border-zinc-700 bg-zinc-900 text-[#FF5729] focus:ring-0 cursor-pointer"
               />
-              <label htmlFor="autoProcess" className="text-xs text-[#B0B3BE] cursor-pointer">
-                <span className="font-medium text-white block">Immediate AI Processing</span>
-                Automatically extract structured profile and evaluate against LCA and UI/UX roles.
+              <label htmlFor="autoProcess" className="text-xs text-zinc-400 cursor-pointer">
+                <span className="font-medium text-zinc-200 block">Immediate AI Qualification Evaluation</span>
+                Automatically extract structured candidate claims and calculate match scores for both roles.
               </label>
             </div>
 
-            {/* Error Banner */}
+            {/* Error Message */}
             {uploadError && (
               <div className="p-3 rounded-md bg-rose-950/40 border border-rose-900/60 text-xs text-rose-300 flex items-start gap-2">
-                <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+                <IconAlertCircle size={15} className="shrink-0 mt-0.5 text-rose-400" />
                 <span>{uploadError}</span>
               </div>
             )}
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   resetState();
                   onClose();
                 }}
                 disabled={isUploading}
-                className="px-4 py-2 rounded-md border border-[#1f1f28] text-sm text-[#8B8D98] hover:text-white hover:bg-[#14141a] transition-colors"
               >
                 Cancel
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="sm"
                 onClick={handleUpload}
                 disabled={!selectedFile || isUploading}
-                className="px-4 py-2 rounded-md bg-[#FF5729] hover:bg-[#E0481D] disabled:opacity-50 text-white text-sm font-medium transition-all flex items-center gap-2"
+                className="gap-1.5"
               >
                 {isUploading ? (
-                  <>
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                    </svg>
-                    <span>{autoProcess ? 'Processing Pipeline...' : 'Uploading...'}</span>
-                  </>
+                  <span>Processing Pipeline...</span>
                 ) : (
                   <span>Upload & Ingest</span>
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
-          /* Result Card */
+          /* Result Summary */
           <div className="mt-4 space-y-4">
             <div
               className={`p-4 rounded-lg border ${
                 uploadResult.is_duplicate
-                  ? 'border-amber-500/30 bg-amber-950/20 text-amber-200'
-                  : 'border-emerald-500/30 bg-emerald-950/20 text-emerald-200'
+                  ? 'border-amber-800/60 bg-amber-950/20 text-amber-200'
+                  : 'border-emerald-800/60 bg-emerald-950/20 text-emerald-200'
               }`}
             >
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-sm">
-                  {uploadResult.is_duplicate ? 'Existing Candidate Found' : 'Resume Successfully Ingested'}
+                <span className="font-semibold text-xs">
+                  {uploadResult.is_duplicate ? 'Duplicate Document Detected' : 'Resume Successfully Ingested'}
                 </span>
               </div>
-              <p className="text-xs text-[#B0B3BE] mt-1">{uploadResult.message}</p>
-              <div className="mt-3 p-3 rounded bg-[#0a0a0e] border border-[#1f1f28] text-xs font-mono text-[#F4F4F6] space-y-1">
+              <p className="text-xs text-zinc-400 mt-1">{uploadResult.message}</p>
+              <div className="mt-3 p-3 rounded bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-300 space-y-1">
                 <div>Candidate Code: <span className="text-[#FF5729] font-bold">{uploadResult.candidate_code}</span></div>
                 <div>Status: <span className="text-emerald-400">{uploadResult.processing_status}</span></div>
-                <div className="text-[10px] text-[#8B8D98] truncate">SHA-256: {uploadResult.sha256}</div>
+                <div className="text-[10px] text-zinc-500 truncate">SHA-256: {uploadResult.sha256}</div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={resetState}
-                className="px-3 py-1.5 rounded-md border border-[#1f1f28] text-xs text-[#8B8D98] hover:text-white"
-              >
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <Button variant="outline" size="sm" onClick={resetState}>
                 Upload Another
-              </button>
+              </Button>
               {onCandidateSelected && (
-                <button
-                  type="button"
+                <Button
+                  size="sm"
                   onClick={() => {
                     const cid = uploadResult.candidate_id;
                     resetState();
                     onClose();
                     onCandidateSelected(cid);
                   }}
-                  className="px-4 py-2 rounded-md bg-[#FF5729] hover:bg-[#E0481D] text-white text-xs font-medium"
                 >
-                  Inspect Candidate Evidence →
-                </button>
+                  Inspect Candidate Dossier
+                </Button>
               )}
             </div>
           </div>
@@ -297,4 +279,3 @@ export default function UploadModal({
     </div>
   );
 }
-

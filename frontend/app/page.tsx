@@ -1,14 +1,19 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { CandidateSummaryItem, SystemStats } from '@/lib/types';
 import { useReviewer } from '@/components/layout/ReviewerContext';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { IconSearch, IconChevronRight, IconUpload } from '@/components/ui/icons';
 
 export default function HomePage() {
   const { openCandidateDrawer, openUploadModal, refreshTrigger } = useReviewer();
   const [candidates, setCandidates] = useState<CandidateSummaryItem[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats>({
@@ -31,7 +36,6 @@ export default function HomePage() {
         if (!isMounted) return;
         setCandidates(res.candidates);
 
-        // Compute system stats from live dataset
         let lcaQ = 0;
         let uiuxQ = 0;
         let bothQ = 0;
@@ -72,260 +76,279 @@ export default function HomePage() {
     };
   }, [refreshTrigger]);
 
+  const filteredCandidates = useMemo(() => {
+    if (!searchTerm.trim()) return candidates;
+    const q = searchTerm.toLowerCase();
+    return candidates.filter(
+      (c) =>
+        c.candidate_code.toLowerCase().includes(q) ||
+        c.original_filename.toLowerCase().includes(q) ||
+        c.classification.toLowerCase().includes(q)
+    );
+  }, [candidates, searchTerm]);
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Hero Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#1f1f28]">
+    <div className="space-y-6">
+      {/* Page Title & Context */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
         <div>
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full border border-[#1f1f28] bg-[#0d0d11] text-xs font-mono text-[#FF5729] mb-2">
-            <span>Verified Dataset</span>
-            <span className="w-1 h-1 rounded-full bg-[#FF5729]" />
-            <span>47 Resumes Analyzed</span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+              GFI Candidate Evaluation Portal
+            </span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white">
-            Resume Intelligence Dashboard
+          <h1 className="text-xl font-bold tracking-tight text-white">
+            Resume Screening & Dual-Role Ranking
           </h1>
-          <p className="text-sm text-[#8B8D98] mt-1 max-w-2xl">
-            Dual-role screening, deterministic scoring, and verbatim evidence verification for Life Cycle Assessment and UI/UX Design positions.
+          <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
+            Automated qualification extraction, deterministic scoring, and explainable ranking for 47 candidates across LCA Consultant and UI/UX Design positions.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={openUploadModal}
-            className="px-4 py-2 rounded-lg bg-[#FF5729] hover:bg-[#E0481D] text-white text-sm font-medium transition-all shadow-lg shadow-[#FF5729]/20 flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Ingest New Resume</span>
-          </button>
-        </div>
+        <Button onClick={openUploadModal} className="gap-2 shrink-0">
+          <IconUpload size={14} />
+          <span>Upload Resume</span>
+        </Button>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-[#0d0d11] border border-[#1f1f28] shadow-lg">
-          <span className="text-xs uppercase font-semibold text-[#8B8D98]">Total Resumes</span>
-          <div className="text-3xl font-bold font-mono text-white mt-2">
-            {loading ? '—' : stats.totalCandidates}
-          </div>
-          <span className="text-[11px] text-[#8B8D98] mt-1 block">Full audited dataset</span>
-        </div>
+      {/* KPI Metric Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card>
+          <CardHeader className="p-4 pb-1">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Total Applicants</span>
+            <div className="text-2xl font-bold text-white tabular-nums mt-0.5">
+              {loading ? '—' : stats.totalCandidates}
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+            47 Audited Resumes
+          </CardContent>
+        </Card>
 
-        <div className="p-4 rounded-xl bg-[#0d0d11] border border-emerald-900/30 shadow-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase font-semibold text-emerald-400">LCA Qualified</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono">≥ 55.0</span>
-          </div>
-          <div className="text-3xl font-bold font-mono text-emerald-400 mt-2">
-            {loading ? '—' : stats.lcaQualified}
-          </div>
-          <span className="text-[11px] text-[#8B8D98] mt-1 block">Chennai Onsite / GaBi</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-[#0d0d11] border border-blue-900/30 shadow-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase font-semibold text-blue-400">UI/UX Qualified</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 font-mono">≥ 50.0</span>
-          </div>
-          <div className="text-3xl font-bold font-mono text-blue-400 mt-2">
-            {loading ? '—' : stats.uiuxQualified}
-          </div>
-          <span className="text-[11px] text-[#8B8D98] mt-1 block">Remote / Figma Design</span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-[#0d0d11] border border-amber-900/30 shadow-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase font-semibold text-amber-400">Manual Review</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 font-mono">Null / Flagged</span>
-          </div>
-          <div className="text-3xl font-bold font-mono text-amber-400 mt-2">
-            {loading ? '—' : stats.manualReviewRequired}
-          </div>
-          <span className="text-[11px] text-[#8B8D98] mt-1 block">Empty/unparsed docs</span>
-        </div>
-      </div>
-
-      {/* Role Comparison Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* LCA Banner */}
-        <div className="p-6 rounded-xl bg-[#0d0d11] border border-[#1f1f28] flex flex-col justify-between hover:border-[#2f2f3e] transition-all shadow-xl">
-          <div className="space-y-3">
+        <Card className="border-emerald-900/40 bg-[#0d110f]">
+          <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase font-bold text-[#FF5729] tracking-wider">Role Profile 1</span>
-              <span className="text-xs font-mono text-[#8B8D98]">Target Exp: 2–3 Years</span>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">LCA Qualified</span>
+              <Badge variant="success">Threshold 55.0</Badge>
             </div>
-            <h2 className="text-xl font-bold text-white">Life Cycle Assessment (LCA) Consultant</h2>
-            <p className="text-xs text-[#B0B3BE] leading-relaxed">
-              Chennai Onsite requirement. Requires GaBi or SimaPro proficiency (35 pts), ISO 14040/14044 standards (25 pts), and demonstrated industrial LCA experience.
-            </p>
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">GaBi / SimaPro</span>
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">ISO 14040 / 14044</span>
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">Chennai Onsite</span>
+            <div className="text-2xl font-bold text-emerald-400 tabular-nums mt-0.5">
+              {loading ? '—' : stats.lcaQualified}
             </div>
-          </div>
-          <div className="pt-6 mt-4 border-t border-[#1f1f28] flex items-center justify-between">
-            <span className="text-xs font-mono text-[#8B8D98]">
-              Qualified: <span className="text-emerald-400 font-bold">{stats.lcaQualified}</span> candidates
-            </span>
-            <Link
-              href="/rankings/lca"
-              className="px-3.5 py-1.5 rounded-md bg-[#14141a] hover:bg-[#1f1f28] text-white text-xs font-medium border border-[#272733] transition-colors"
-            >
-              View LCA Rankings →
-            </Link>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
+            Chennai Onsite / GaBi / SimaPro
+          </CardContent>
+        </Card>
 
-        {/* UI/UX Banner */}
-        <div className="p-6 rounded-xl bg-[#0d0d11] border border-[#1f1f28] flex flex-col justify-between hover:border-[#2f2f3e] transition-all shadow-xl">
-          <div className="space-y-3">
+        <Card className="border-blue-900/40 bg-[#0c1017]">
+          <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase font-bold text-blue-400 tracking-wider">Role Profile 2</span>
-              <span className="text-xs font-mono text-[#8B8D98]">Target Exp: 0–1 Years</span>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-blue-400">UI/UX Qualified</span>
+              <Badge variant="info">Threshold 50.0</Badge>
             </div>
-            <h2 className="text-xl font-bold text-white">UI/UX Designer Intern</h2>
-            <p className="text-xs text-[#B0B3BE] leading-relaxed">
-              Fully Remote position. Prioritizes Figma mastery (30 pts), user research & cognitive psychology principles (25 pts), design thinking, and tangible portfolio projects.
-            </p>
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">Figma</span>
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">User Research</span>
-              <span className="px-2 py-0.5 rounded text-[11px] bg-[#14141a] text-[#B0B3BE] border border-[#272733]">Cognitive Psychology</span>
+            <div className="text-2xl font-bold text-blue-400 tabular-nums mt-0.5">
+              {loading ? '—' : stats.uiuxQualified}
             </div>
-          </div>
-          <div className="pt-6 mt-4 border-t border-[#1f1f28] flex items-center justify-between">
-            <span className="text-xs font-mono text-[#8B8D98]">
-              Qualified: <span className="text-blue-400 font-bold">{stats.uiuxQualified}</span> candidates
-            </span>
-            <Link
-              href="/rankings/uiux"
-              className="px-3.5 py-1.5 rounded-md bg-[#14141a] hover:bg-[#1f1f28] text-white text-xs font-medium border border-[#272733] transition-colors"
-            >
-              View UI/UX Rankings →
-            </Link>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
+            Remote / Figma / Research
+          </CardContent>
+        </Card>
+
+        <Card className="border-amber-900/40 bg-[#12100d]">
+          <CardHeader className="p-4 pb-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">Manual Review</span>
+              <Badge variant="warning">Low Text / Null</Badge>
+            </div>
+            <div className="text-2xl font-bold text-amber-400 tabular-nums mt-0.5">
+              {loading ? '—' : stats.manualReviewRequired}
+            </div>
+          </CardHeader>
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
+            1 Empty Doc (CAND-005)
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Dataset Register Table */}
-      <div className="rounded-xl border border-[#1f1f28] bg-[#0d0d11] p-6 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-bold text-white">Candidate Inventory & Review Register</h3>
-            <p className="text-xs text-[#8B8D98] mt-0.5">
-              Click any candidate row to open the complete extraction dossier, dual evaluations, and source text.
-            </p>
-          </div>
-          <span className="text-xs font-mono text-[#8B8D98]">
-            Showing {candidates.length} candidates
-          </span>
-        </div>
+      {/* Two Roles Comparison Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Role 1: LCA */}
+        <Card className="flex flex-col justify-between">
+          <CardHeader className="p-5 pb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <Badge variant="default" className="text-[10px] font-mono">ROLE 1 • ONSITE CHENNAI</Badge>
+              <span className="text-xs font-mono text-zinc-400">Baseline Exp: 2–3 Yrs</span>
+            </div>
+            <CardTitle className="text-base text-white">Life Cycle Assessment (LCA) Consultant</CardTitle>
+            <CardDescription className="text-xs text-zinc-400 mt-1">
+              Grounded in JD1. Requires GaBi or SimaPro modeling tools (35 pts), ISO 14040/14044 standard conformance (25 pts), and demonstrated life cycle inventory/impact assessment experience.
+            </CardDescription>
+            <div className="flex flex-wrap gap-1.5 pt-3">
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">GaBi</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">SimaPro</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">ISO 14040/44</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Chennai Onsite</span>
+            </div>
+          </CardHeader>
+          <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">
+              Qualified: <span className="text-emerald-400 font-semibold">{stats.lcaQualified}</span> / 47 candidates
+            </span>
+            <Link href="/rankings/lca">
+              <Button variant="secondary" size="sm" className="gap-1">
+                <span>View LCA Rankings</span>
+                <IconChevronRight size={13} />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
 
-        {error && (
-          <div className="p-3 rounded bg-rose-950/30 border border-rose-900/50 text-xs text-rose-300">
-            {error}
+        {/* Role 2: UI/UX */}
+        <Card className="flex flex-col justify-between">
+          <CardHeader className="p-5 pb-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <Badge variant="default" className="text-[10px] font-mono">ROLE 2 • FULLY REMOTE</Badge>
+              <span className="text-xs font-mono text-zinc-400">Target Exp: 0–1 Yrs</span>
+            </div>
+            <CardTitle className="text-base text-white">UI/UX Design Intern</CardTitle>
+            <CardDescription className="text-xs text-zinc-400 mt-1">
+              Grounded in JD2. Requires Figma prototyping and component systems (30 pts), user research methodologies and cognitive psychology (25 pts), and case study deliverables.
+            </CardDescription>
+            <div className="flex flex-wrap gap-1.5 pt-3">
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Figma</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">User Research</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Cognitive Psychology</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Remote</span>
+            </div>
+          </CardHeader>
+          <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">
+              Qualified: <span className="text-blue-400 font-semibold">{stats.uiuxQualified}</span> / 47 candidates
+            </span>
+            <Link href="/rankings/uiux">
+              <Button variant="secondary" size="sm" className="gap-1">
+                <span>View UI/UX Rankings</span>
+                <IconChevronRight size={13} />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Candidate Register Table */}
+      <Card>
+        <CardHeader className="p-5 pb-4 border-b border-zinc-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-sm font-semibold text-white">Applicant Inventory & Review Register</CardTitle>
+              <CardDescription className="text-xs text-zinc-400 mt-0.5">
+                Click any row to open the candidate's verified evidence dossier, criterion scoring breakdown, and original resume.
+              </CardDescription>
+            </div>
+
+            {/* Quick Search */}
+            <div className="relative w-full sm:w-64">
+              <IconSearch size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+              <input
+                type="text"
+                placeholder="Search candidate code..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
+              />
+            </div>
           </div>
-        )}
+        </CardHeader>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#1f1f28] bg-[#08080c] text-[11px] uppercase font-mono tracking-wider text-[#8B8D98]">
-                <th className="py-2.5 px-3">Candidate Code</th>
-                <th className="py-2.5 px-3">Classification</th>
-                <th className="py-2.5 px-3">LCA Score</th>
-                <th className="py-2.5 px-3">UI/UX Score</th>
-                <th className="py-2.5 px-3">Status</th>
-                <th className="py-2.5 px-3 text-center">Confidence</th>
-                <th className="py-2.5 px-3 text-right">Inspect</th>
+              <tr className="border-b border-zinc-800/80 bg-zinc-900/40 text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                <th className="py-2.5 px-4">Candidate Code</th>
+                <th className="py-2.5 px-4">Classification</th>
+                <th className="py-2.5 px-4">LCA Match</th>
+                <th className="py-2.5 px-4">UI/UX Match</th>
+                <th className="py-2.5 px-4">Processing Status</th>
+                <th className="py-2.5 px-4 text-center">Confidence</th>
+                <th className="py-2.5 px-4 text-right">Inspect</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1f1f28] text-xs">
+            <tbody className="divide-y divide-zinc-800/60 text-xs">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-[#8B8D98]">
-                    Loading candidate register...
+                  <td colSpan={7} className="py-12 text-center text-zinc-500">
+                    Loading candidate dossier register...
                   </td>
                 </tr>
-              ) : candidates.length === 0 ? (
+              ) : filteredCandidates.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-[#8B8D98]">
-                    No candidates found.
+                  <td colSpan={7} className="py-12 text-center text-zinc-500">
+                    No candidates found matching '{searchTerm}'.
                   </td>
                 </tr>
               ) : (
-                candidates.map((c) => (
+                filteredCandidates.map((c) => (
                   <tr
                     key={c.id}
                     onClick={() => openCandidateDrawer(c.id)}
-                    className="hover:bg-[#14141c] transition-colors cursor-pointer group"
+                    className="hover:bg-zinc-900/50 transition-colors cursor-pointer group"
                   >
-                    <td className="py-3 px-3 font-mono font-bold text-white group-hover:text-[#FF5729]">
+                    <td className="py-3 px-4 font-mono font-medium text-white group-hover:text-[#FF5729]">
                       {c.candidate_code}
                     </td>
-                    <td className="py-3 px-3">
+                    <td className="py-3 px-4">
                       {c.classification === 'LCA' && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                          LCA Consultant
-                        </span>
+                        <Badge variant="success">LCA Consultant</Badge>
                       )}
                       {c.classification === 'UI_UX' && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/30">
-                          UI/UX Designer
-                        </span>
+                        <Badge variant="info">UI/UX Designer</Badge>
                       )}
                       {c.classification === 'BOTH' && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/15 text-purple-400 border border-purple-500/30">
-                          Dual Match
-                        </span>
+                        <Badge variant="outline" className="border-purple-800 text-purple-300">Dual Match</Badge>
                       )}
                       {c.classification === 'NEITHER_OR_UNCERTAIN' && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-800 text-zinc-400 border border-zinc-700">
-                          Uncertain / Review
-                        </span>
+                        <Badge variant="secondary">Uncertain / Review</Badge>
                       )}
                     </td>
-                    <td className="py-3 px-3 font-mono">
+                    <td className="py-3 px-4 font-mono">
                       {c.lca_score !== null ? (
-                        <span className={c.lca_score >= 55.0 ? 'text-emerald-400 font-bold' : 'text-zinc-400'}>
-                          {c.lca_score.toFixed(1)}
+                        <span className={c.lca_score >= 55.0 ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}>
+                          {c.lca_score.toFixed(1)} / 100
                         </span>
                       ) : (
-                        <span className="text-zinc-500">null</span>
+                        <span className="text-zinc-600">null</span>
                       )}
                     </td>
-                    <td className="py-3 px-3 font-mono">
+                    <td className="py-3 px-4 font-mono">
                       {c.uiux_score !== null ? (
-                        <span className={c.uiux_score >= 50.0 ? 'text-blue-400 font-bold' : 'text-zinc-400'}>
-                          {c.uiux_score.toFixed(1)}
+                        <span className={c.uiux_score >= 50.0 ? 'text-blue-400 font-semibold' : 'text-zinc-400'}>
+                          {c.uiux_score.toFixed(1)} / 100
                         </span>
                       ) : (
-                        <span className="text-zinc-500">null</span>
+                        <span className="text-zinc-600">null</span>
                       )}
                     </td>
-                    <td className="py-3 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-[#14141a] text-[#8B8D98] font-mono border border-[#272733]">
-                        {c.processing_status}
-                      </span>
+                    <td className="py-3 px-4 font-mono text-zinc-400">
+                      {c.processing_status}
                     </td>
-                    <td className="py-3 px-3 text-center font-mono">
-                      <span className="text-emerald-400">
+                    <td className="py-3 px-4 text-center font-mono">
+                      <span className={c.extraction_confidence >= 0.8 ? 'text-emerald-400' : 'text-amber-400'}>
                         {(c.extraction_confidence * 100).toFixed(0)}%
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-right">
-                      <button
+                    <td className="py-3 px-4 text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           openCandidateDrawer(c.id);
                         }}
-                        className="px-2 py-1 rounded text-xs text-[#8B8D98] group-hover:text-white group-hover:bg-[#1f1f28] transition-colors"
+                        className="text-zinc-400 group-hover:text-white"
                       >
-                        Inspect →
-                      </button>
+                        Inspect
+                      </Button>
                     </td>
                   </tr>
                 ))
@@ -333,7 +356,7 @@ export default function HomePage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

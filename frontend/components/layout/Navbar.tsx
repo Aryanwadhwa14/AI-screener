@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
+import { Button } from '@/components/ui/button';
+import { IconUpload } from '@/components/ui/icons';
 
 interface NavbarProps {
   onOpenUpload: () => void;
@@ -39,38 +41,30 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#1f1f28] bg-[#020203]/90 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-800 bg-[#09090b]/95 backdrop-blur">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF5729] to-[#b3340f] flex items-center justify-center shadow-lg shadow-[#FF5729]/20 group-hover:scale-105 transition-transform">
-              <svg className="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-              </svg>
-            </div>
-            <div>
-              <span className="font-bold text-base tracking-tight text-white flex items-center gap-2">
-                GFI Resume Screener
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#FF5729]/15 text-[#FF5729] border border-[#FF5729]/30">
-                  Dual-Role
-                </span>
-              </span>
-            </div>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <span className="font-semibold text-sm tracking-tight text-white flex items-center gap-2">
+              Growth For Impact
+              <span className="text-[11px] font-normal text-zinc-500">•</span>
+              <span className="text-xs font-normal text-zinc-300">Resume Screener</span>
+            </span>
           </Link>
 
           {/* Navigation Items */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1 border-l border-zinc-800 pl-6">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     isActive
-                      ? 'bg-[#14141a] text-white border border-[#272733]'
-                      : 'text-[#8B8D98] hover:text-white hover:bg-[#0d0d11]'
+                      ? 'bg-zinc-800 text-white border border-zinc-700/80'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
                   }`}
                 >
                   {link.label}
@@ -81,11 +75,11 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Health Indicator */}
-          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-mono border border-[#1f1f28] bg-[#0d0d11]">
+          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded border border-zinc-800 bg-[#0e0e11] text-[11px] font-mono text-zinc-400">
             <span
-              className={`w-2 h-2 rounded-full ${
+              className={`w-1.5 h-1.5 rounded-full ${
                 isBackendHealthy === null
                   ? 'bg-amber-400 animate-pulse'
                   : isBackendHealthy
@@ -93,28 +87,22 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
                   : 'bg-rose-500'
               }`}
             />
-            <span className="text-[#8B8D98]">
+            <span>
               {isBackendHealthy === null
                 ? 'Connecting...'
                 : isBackendHealthy
-                ? 'Backend Online'
-                : 'Backend Offline'}
+                ? 'System Online'
+                : 'Offline'}
             </span>
           </div>
 
           {/* Upload Button */}
-          <button
-            onClick={onOpenUpload}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-md bg-[#FF5729] hover:bg-[#E0481D] text-white text-sm font-medium transition-all shadow-md shadow-[#FF5729]/25 hover:shadow-lg active:scale-95"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
+          <Button onClick={onOpenUpload} size="sm" className="gap-1.5 font-medium">
+            <IconUpload size={14} />
             <span>Upload Resume</span>
-          </button>
+          </Button>
         </div>
       </div>
     </header>
   );
 }
-
