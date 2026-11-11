@@ -1,8 +1,24 @@
 import os
 import secrets
 import time
-from typing import Dict
+from typing import Dict, Optional
 from app.services.storage.base import StorageService
+
+
+def resolve_storage_dir(base_dir: Optional[str] = None) -> str:
+    target = base_dir or os.environ.get("LOCAL_STORAGE_DIR") or "data/storage/resumes"
+    if os.path.isabs(target):
+        os.makedirs(target, exist_ok=True)
+        return target
+    if os.path.exists(target):
+        return os.path.abspath(target)
+    parent_relative = os.path.join("..", target)
+    if os.path.exists(parent_relative):
+        return os.path.abspath(parent_relative)
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    resolved = os.path.join(repo_root, target)
+    os.makedirs(resolved, exist_ok=True)
+    return resolved
 
 
 class LocalStorageService(StorageService):
@@ -11,8 +27,8 @@ class LocalStorageService(StorageService):
     Stores files in a designated local directory and provides time-limited mock access tokens.
     """
 
-    def __init__(self, base_dir: str = "data/storage/resumes"):
-        self.base_dir = base_dir
+    def __init__(self, base_dir: Optional[str] = None):
+        self.base_dir = resolve_storage_dir(base_dir)
         os.makedirs(self.base_dir, exist_ok=True)
         self._tokens: Dict[str, Dict] = {}
 

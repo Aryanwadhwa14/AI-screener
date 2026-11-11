@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import json
 from datetime import datetime, timezone
@@ -28,14 +29,30 @@ def iso_dt(dt: Optional[datetime]) -> Optional[str]:
     return dt.isoformat() if dt else None
 
 
+def resolve_sqlite_path(db_path: Optional[str] = None) -> str:
+    target = db_path or os.environ.get("SQLITE_DB_PATH") or "data/app.db"
+    if os.path.isabs(target):
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        return target
+    if os.path.exists(target):
+        return os.path.abspath(target)
+    parent_relative = os.path.join("..", target)
+    if os.path.exists(parent_relative):
+        return os.path.abspath(parent_relative)
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    resolved = os.path.join(repo_root, target)
+    os.makedirs(os.path.dirname(resolved), exist_ok=True)
+    return resolved
+
+
 class SQLiteRepository(Repository):
     """
     High-performance, zero-external-dependency SQLite repository.
     Enforces identical constraints, schemas, and relational invariants as the PostgreSQL migrations.
     """
 
-    def __init__(self, db_path: str = "data/app.db"):
-        self.db_path = db_path
+    def __init__(self, db_path: Optional[str] = None):
+        self.db_path = resolve_sqlite_path(db_path)
         self._init_tables()
 
     def _get_connection(self) -> sqlite3.Connection:
