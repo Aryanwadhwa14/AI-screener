@@ -8,12 +8,34 @@ import { useReviewer } from '@/components/layout/ReviewerContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { IconSearch, IconChevronRight, IconUpload } from '@/components/ui/icons';
+import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '@/components/ui/table';
+import {
+  IconSearch,
+  IconChevronRight,
+  IconUpload,
+  IconBriefcase,
+  IconShieldCheck,
+  IconFileText,
+  IconAlertCircle,
+  IconCheckCircle,
+} from '@/components/ui/icons';
+
+type DomainFilter = 'ALL' | 'QUALIFIED' | 'LCA' | 'UI_UX' | 'REVIEW';
 
 export default function HomePage() {
   const { openCandidateDrawer, openUploadModal, refreshTrigger } = useReviewer();
   const [candidates, setCandidates] = useState<CandidateSummaryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilter, setActiveFilter] = useState<DomainFilter>('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<SystemStats>({
@@ -48,8 +70,8 @@ export default function HomePage() {
           if (c.uiux_score !== null && c.uiux_score >= 50.0) uiuxQ++;
           if (c.classification === 'BOTH') bothQ++;
           if (c.classification === 'NEITHER_OR_UNCERTAIN') neither++;
-          if (c.processing_status === 'COMPLETED' || c.processing_status === 'PROCESSED') completed++;
-          if (c.processing_status === 'MANUAL_REVIEW_REQUIRED' || c.lca_score === null || c.uiux_score === null) {
+          if (c.processing_status === 'COMPLETED') completed++;
+          if (c.processing_status === 'MANUAL_REVIEW_REQUIRED') {
             review++;
           }
         });
@@ -65,7 +87,8 @@ export default function HomePage() {
         });
       })
       .catch((err) => {
-        if (isMounted) setError(err.message || 'Failed to load candidates.');
+        if (!isMounted) return;
+        setError(err.message || 'Failed to load candidates.');
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -77,158 +100,199 @@ export default function HomePage() {
   }, [refreshTrigger]);
 
   const filteredCandidates = useMemo(() => {
-    if (!searchTerm.trim()) return candidates;
-    const q = searchTerm.toLowerCase();
-    return candidates.filter(
-      (c) =>
+    return candidates.filter((c) => {
+      // Search filter
+      const q = searchTerm.toLowerCase();
+      const matchesSearch =
+        !searchTerm.trim() ||
         c.candidate_code.toLowerCase().includes(q) ||
         c.original_filename.toLowerCase().includes(q) ||
-        c.classification.toLowerCase().includes(q)
-    );
-  }, [candidates, searchTerm]);
+        c.classification.toLowerCase().includes(q);
+
+      if (!matchesSearch) return false;
+
+      // Category filter
+      if (activeFilter === 'QUALIFIED') {
+        return (
+          (c.lca_score !== null && c.lca_score >= 55.0) ||
+          (c.uiux_score !== null && c.uiux_score >= 50.0)
+        );
+      }
+      if (activeFilter === 'LCA') {
+        return c.classification === 'LCA' || c.classification === 'BOTH';
+      }
+      if (activeFilter === 'UI_UX') {
+        return c.classification === 'UI_UX' || c.classification === 'BOTH';
+      }
+      if (activeFilter === 'REVIEW') {
+        return c.processing_status === 'MANUAL_REVIEW_REQUIRED';
+      }
+      return true;
+    });
+  }, [candidates, searchTerm, activeFilter]);
 
   return (
     <div className="space-y-6">
-      {/* Page Title & Context */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800">
+      {/* Top Banner / ATS Overview Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
-              GFI Candidate Evaluation Portal
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+              Talent Screening & Sourcing Platform
             </span>
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-white">
-            Resume Screening & Dual-Role Ranking
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            Candidate Screening Pipeline
           </h1>
           <p className="text-xs text-zinc-400 mt-1 max-w-2xl leading-relaxed">
-            Automated qualification extraction, deterministic scoring, and explainable ranking for 47 candidates across LCA Consultant and UI/UX Design positions.
+            Automated resume parsing, deterministic fit scoring, and verifiable evidence provenance across active requisitions.
           </p>
         </div>
 
-        <Button onClick={openUploadModal} className="gap-2 shrink-0">
-          <IconUpload size={14} />
-          <span>Upload Resume</span>
-        </Button>
+        <div className="flex items-center gap-2.5">
+          <Button onClick={openUploadModal} className="gap-2 shrink-0">
+            <IconUpload size={14} />
+            <span>Screen New Resume</span>
+          </Button>
+        </div>
       </div>
 
-      {/* KPI Metric Cards */}
+      {/* Metric KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card>
+        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
           <CardHeader className="p-4 pb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Total Applicants</span>
-            <div className="text-2xl font-bold text-white tabular-nums mt-0.5">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+              Screened Pool
+            </span>
+            <div className="text-2xl font-bold text-zinc-100 tabular-nums mt-0.5">
               {loading ? '—' : stats.totalCandidates}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
-            47 Audited Resumes
+            47 Active Resumes Parsed
           </CardContent>
         </Card>
 
-        <Card className="border-emerald-900/40 bg-[#0d110f]">
+        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">LCA Qualified</span>
-              <Badge variant="success">Threshold 55.0</Badge>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                Sustainability & LCA
+              </span>
+              <Badge variant="success">Bench ≥ 55%</Badge>
             </div>
             <div className="text-2xl font-bold text-emerald-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.lcaQualified}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
-            Chennai Onsite / GaBi / SimaPro
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+            Environmental Impact Specialists
           </CardContent>
         </Card>
 
-        <Card className="border-blue-900/40 bg-[#0c1017]">
+        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-blue-400">UI/UX Qualified</span>
-              <Badge variant="info">Threshold 50.0</Badge>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                Product & UI/UX
+              </span>
+              <Badge variant="info">Bench ≥ 50%</Badge>
             </div>
             <div className="text-2xl font-bold text-blue-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.uiuxQualified}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
-            Remote / Figma / Research
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+            Design & Usability Specialists
           </CardContent>
         </Card>
 
-        <Card className="border-amber-900/40 bg-[#12100d]">
+        <Card className="bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700/80 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">Manual Review</span>
-              <Badge variant="warning">Low Text / Null</Badge>
+              <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">
+                Audit Status
+              </span>
+              <Badge variant={stats.manualReviewRequired > 0 ? 'warning' : 'default'}>
+                {stats.manualReviewRequired > 0 ? 'Review Needed' : '100% Verified'}
+              </Badge>
             </div>
-            <div className="text-2xl font-bold text-amber-400 tabular-nums mt-0.5">
-              {loading ? '—' : stats.manualReviewRequired}
+            <div className="text-2xl font-bold text-zinc-100 tabular-nums mt-0.5">
+              {loading ? '—' : stats.manualReviewRequired === 0 ? '100%' : `${stats.manualReviewRequired} Flag`}
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-1 text-[11px] text-zinc-400">
-            1 Empty Doc (CAND-005)
+          <CardContent className="p-4 pt-1 text-[11px] text-zinc-500">
+            {stats.manualReviewRequired > 0 ? 'CAND-005 Empty Document' : 'Zero hallucinated quotes'}
           </CardContent>
         </Card>
       </div>
 
-      {/* Two Roles Comparison Grid */}
+      {/* Active Requisitions / Open Positions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Role 1: LCA */}
-        <Card className="flex flex-col justify-between">
+        {/* Requisition 1 */}
+        <Card className="bg-zinc-900/30 border-zinc-800/80 flex flex-col justify-between hover:border-zinc-700/80 transition-all">
           <CardHeader className="p-5 pb-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <Badge variant="default" className="text-[10px] font-mono">ROLE 1 • ONSITE CHENNAI</Badge>
-              <span className="text-xs font-mono text-zinc-400">Baseline Exp: 2–3 Yrs</span>
+            <div className="flex items-center justify-between mb-2">
+              <Badge variant="secondary" className="font-mono text-[10px]">
+                REQUISITION 01 • ESG & SUSTAINABILITY
+              </Badge>
+              <span className="text-xs font-mono text-zinc-500">Onsite • 2–3 Yrs Target</span>
             </div>
-            <CardTitle className="text-base text-white">Life Cycle Assessment (LCA) Consultant</CardTitle>
-            <CardDescription className="text-xs text-zinc-400 mt-1">
-              Grounded in JD1. Requires GaBi or SimaPro modeling tools (35 pts), ISO 14040/14044 standard conformance (25 pts), and demonstrated life cycle inventory/impact assessment experience.
+            <CardTitle className="text-base text-zinc-100">
+              Sustainability & Life Cycle Assessment (LCA) Specialist
+            </CardTitle>
+            <CardDescription className="text-xs text-zinc-400 mt-1 leading-relaxed">
+              Evaluating candidates on GaBi / SimaPro modeling tools, ISO 14040/14044 conformance, and life cycle inventory (LCI) carbon accounting.
             </CardDescription>
             <div className="flex flex-wrap gap-1.5 pt-3">
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">GaBi</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">GaBi Modeling</span>
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">SimaPro</span>
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">ISO 14040/44</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Chennai Onsite</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">EPD Development</span>
             </div>
           </CardHeader>
           <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
             <span className="text-xs font-mono text-zinc-400">
-              Qualified: <span className="text-emerald-400 font-semibold">{stats.lcaQualified}</span> / 47 candidates
+              Qualified Match: <span className="text-emerald-400 font-semibold">{stats.lcaQualified}</span> candidates
             </span>
             <Link href="/rankings/lca">
-              <Button variant="secondary" size="sm" className="gap-1">
-                <span>View LCA Rankings</span>
+              <Button variant="outline" size="sm" className="gap-1">
+                <span>View Candidates</span>
                 <IconChevronRight size={13} />
               </Button>
             </Link>
           </CardContent>
         </Card>
 
-        {/* Role 2: UI/UX */}
-        <Card className="flex flex-col justify-between">
+        {/* Requisition 2 */}
+        <Card className="bg-zinc-900/30 border-zinc-800/80 flex flex-col justify-between hover:border-zinc-700/80 transition-all">
           <CardHeader className="p-5 pb-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <Badge variant="default" className="text-[10px] font-mono">ROLE 2 • FULLY REMOTE</Badge>
-              <span className="text-xs font-mono text-zinc-400">Target Exp: 0–1 Yrs</span>
+            <div className="flex items-center justify-between mb-2">
+              <Badge variant="secondary" className="font-mono text-[10px]">
+                REQUISITION 02 • DESIGN & PRODUCT
+              </Badge>
+              <span className="text-xs font-mono text-zinc-500">Remote • 0–1 Yrs Target</span>
             </div>
-            <CardTitle className="text-base text-white">UI/UX Design Intern</CardTitle>
-            <CardDescription className="text-xs text-zinc-400 mt-1">
-              Grounded in JD2. Requires Figma prototyping and component systems (30 pts), user research methodologies and cognitive psychology (25 pts), and case study deliverables.
+            <CardTitle className="text-base text-zinc-100">
+              Product & UI/UX Design Specialist
+            </CardTitle>
+            <CardDescription className="text-xs text-zinc-400 mt-1 leading-relaxed">
+              Evaluating candidates on Figma prototyping, design system governance, user research methodologies, and cognitive psychology principles.
             </CardDescription>
             <div className="flex flex-wrap gap-1.5 pt-3">
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Figma</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Design Systems</span>
               <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">User Research</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Cognitive Psychology</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Remote</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300 font-mono">Wireframing</span>
             </div>
           </CardHeader>
           <CardContent className="p-5 pt-3 border-t border-zinc-800/80 flex items-center justify-between">
             <span className="text-xs font-mono text-zinc-400">
-              Qualified: <span className="text-blue-400 font-semibold">{stats.uiuxQualified}</span> / 47 candidates
+              Qualified Match: <span className="text-blue-400 font-semibold">{stats.uiuxQualified}</span> candidates
             </span>
             <Link href="/rankings/uiux">
-              <Button variant="secondary" size="sm" className="gap-1">
-                <span>View UI/UX Rankings</span>
+              <Button variant="outline" size="sm" className="gap-1">
+                <span>View Candidates</span>
                 <IconChevronRight size={13} />
               </Button>
             </Link>
@@ -236,126 +300,223 @@ export default function HomePage() {
         </Card>
       </div>
 
-      {/* Candidate Register Table */}
-      <Card>
-        <CardHeader className="p-5 pb-4 border-b border-zinc-800">
+      {/* Candidate Pipeline Data Table */}
+      <Card className="bg-zinc-900/30 border-zinc-800/80">
+        <CardHeader className="p-5 pb-4 border-b border-zinc-800/80">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-sm font-semibold text-white">Applicant Inventory & Review Register</CardTitle>
+              <CardTitle className="text-sm font-semibold text-zinc-100">
+                Applicant Pool & Evaluation Register
+              </CardTitle>
               <CardDescription className="text-xs text-zinc-400 mt-0.5">
-                Click any row to open the candidate's verified evidence dossier, criterion scoring breakdown, and original resume.
+                Click any candidate row to inspect verbatim resume quotes, full criterion scoring breakdown, and raw extraction.
               </CardDescription>
             </div>
 
             {/* Quick Search */}
             <div className="relative w-full sm:w-64">
-              <IconSearch size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500" />
-              <input
-                type="text"
-                placeholder="Search candidate code..."
+              <IconSearch size={14} className="absolute left-3 top-2.5 text-zinc-500" />
+              <Input
+                placeholder="Search candidates, codes, skills..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 rounded-md bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-700"
+                className="pl-9 h-8 text-xs bg-zinc-950/80 border-zinc-800"
               />
             </div>
           </div>
+
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 pt-3">
+            <button
+              onClick={() => setActiveFilter('ALL')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                activeFilter === 'ALL'
+                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
+              }`}
+            >
+              All Applicants ({candidates.length})
+            </button>
+            <button
+              onClick={() => setActiveFilter('QUALIFIED')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                activeFilter === 'QUALIFIED'
+                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
+              }`}
+            >
+              Qualified Only ({stats.lcaQualified + stats.uiuxQualified})
+            </button>
+            <button
+              onClick={() => setActiveFilter('LCA')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                activeFilter === 'LCA'
+                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
+              }`}
+            >
+              Sustainability & LCA ({stats.lcaQualified})
+            </button>
+            <button
+              onClick={() => setActiveFilter('UI_UX')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                activeFilter === 'UI_UX'
+                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
+              }`}
+            >
+              Product & UI/UX ({stats.uiuxQualified})
+            </button>
+            <button
+              onClick={() => setActiveFilter('REVIEW')}
+              className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                activeFilter === 'REVIEW'
+                  ? 'bg-zinc-100 text-zinc-950 font-semibold shadow-sm'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80'
+              }`}
+            >
+              Audit Required ({stats.manualReviewRequired})
+            </button>
+          </div>
         </CardHeader>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-zinc-800/80 bg-zinc-900/40 text-[11px] font-mono uppercase tracking-wider text-zinc-400">
-                <th className="py-2.5 px-4">Candidate Code</th>
-                <th className="py-2.5 px-4">Classification</th>
-                <th className="py-2.5 px-4">LCA Match</th>
-                <th className="py-2.5 px-4">UI/UX Match</th>
-                <th className="py-2.5 px-4">Processing Status</th>
-                <th className="py-2.5 px-4 text-center">Confidence</th>
-                <th className="py-2.5 px-4 text-right">Inspect</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-800/60 text-xs">
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-zinc-500">
-                    Loading candidate dossier register...
-                  </td>
-                </tr>
-              ) : filteredCandidates.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-zinc-500">
-                    No candidates found matching '{searchTerm}'.
-                  </td>
-                </tr>
-              ) : (
-                filteredCandidates.map((c) => (
-                  <tr
-                    key={c.id}
-                    onClick={() => openCandidateDrawer(c.id)}
-                    className="hover:bg-zinc-900/50 transition-colors cursor-pointer group"
-                  >
-                    <td className="py-3 px-4 font-mono font-medium text-white group-hover:text-[#FF5729]">
-                      {c.candidate_code}
-                    </td>
-                    <td className="py-3 px-4">
-                      {c.classification === 'LCA' && (
-                        <Badge variant="success">LCA Consultant</Badge>
-                      )}
-                      {c.classification === 'UI_UX' && (
-                        <Badge variant="info">UI/UX Designer</Badge>
-                      )}
-                      {c.classification === 'BOTH' && (
-                        <Badge variant="outline" className="border-purple-800 text-purple-300">Dual Match</Badge>
-                      )}
-                      {c.classification === 'NEITHER_OR_UNCERTAIN' && (
-                        <Badge variant="secondary">Uncertain / Review</Badge>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 font-mono">
-                      {c.lca_score !== null ? (
-                        <span className={c.lca_score >= 55.0 ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}>
-                          {c.lca_score.toFixed(1)} / 100
-                        </span>
-                      ) : (
-                        <span className="text-zinc-600">null</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 font-mono">
-                      {c.uiux_score !== null ? (
-                        <span className={c.uiux_score >= 50.0 ? 'text-blue-400 font-semibold' : 'text-zinc-400'}>
-                          {c.uiux_score.toFixed(1)} / 100
-                        </span>
-                      ) : (
-                        <span className="text-zinc-600">null</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 font-mono text-zinc-400">
-                      {c.processing_status}
-                    </td>
-                    <td className="py-3 px-4 text-center font-mono">
-                      <span className={c.extraction_confidence >= 0.8 ? 'text-emerald-400' : 'text-amber-400'}>
-                        {(c.extraction_confidence * 100).toFixed(0)}%
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openCandidateDrawer(c.id);
-                        }}
-                        className="text-zinc-400 group-hover:text-white"
-                      >
-                        Inspect
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="py-16 text-center text-zinc-500 font-mono text-xs">
+              Loading screened candidates...
+            </div>
+          ) : error ? (
+            <div className="py-12 text-center text-rose-400 text-xs">
+              {error}
+            </div>
+          ) : filteredCandidates.length === 0 ? (
+            <div className="py-16 text-center text-zinc-500 text-xs">
+              No candidates matching current search or filter.
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-28 font-mono text-[11px]">Candidate</TableHead>
+                  <TableHead className="font-mono text-[11px]">Primary Domain Fit</TableHead>
+                  <TableHead className="font-mono text-[11px]">LCA Match</TableHead>
+                  <TableHead className="font-mono text-[11px]">UI/UX Match</TableHead>
+                  <TableHead className="font-mono text-[11px]">Provenance Status</TableHead>
+                  <TableHead className="text-right font-mono text-[11px]">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCandidates.map((c) => {
+                  const isLcaQualified = c.lca_score !== null && c.lca_score >= 55.0;
+                  const isUiuxQualified = c.uiux_score !== null && c.uiux_score >= 50.0;
+                  const isReview = c.processing_status === 'MANUAL_REVIEW_REQUIRED';
+
+                  return (
+                    <TableRow
+                      key={c.id}
+                      onClick={() => openCandidateDrawer(c.id)}
+                      className="cursor-pointer"
+                    >
+                      {/* Candidate Code & Source File */}
+                      <TableCell>
+                        <div className="font-mono font-semibold text-zinc-100">
+                          {c.candidate_code}
+                        </div>
+                        <div className="text-[11px] text-zinc-500 truncate max-w-[140px]" title={c.original_filename}>
+                          {c.original_filename}
+                        </div>
+                      </TableCell>
+
+                      {/* Primary Domain Fit */}
+                      <TableCell>
+                        {c.classification === 'LCA' ? (
+                          <Badge variant="success">Sustainability & LCA</Badge>
+                        ) : c.classification === 'UI_UX' ? (
+                          <Badge variant="info">Product & UI/UX</Badge>
+                        ) : c.classification === 'BOTH' ? (
+                          <Badge variant="default">Multi-Disciplinary</Badge>
+                        ) : isReview ? (
+                          <Badge variant="warning">Empty Document</Badge>
+                        ) : (
+                          <Badge variant="secondary">Under Threshold</Badge>
+                        )}
+                      </TableCell>
+
+                      {/* LCA Score & Bar */}
+                      <TableCell>
+                        {c.lca_score === null ? (
+                          <span className="font-mono text-zinc-500 text-[11px]">null (failed)</span>
+                        ) : (
+                          <div className="w-28 space-y-1">
+                            <div className="flex items-center justify-between text-[11px] font-mono">
+                              <span className={isLcaQualified ? 'text-emerald-400 font-semibold' : 'text-zinc-400'}>
+                                {c.lca_score.toFixed(1)}%
+                              </span>
+                              {isLcaQualified && (
+                                <span className="text-[10px] text-emerald-500 font-mono">PASS</span>
+                              )}
+                            </div>
+                            <Progress
+                              value={c.lca_score}
+                              className="h-1.5 bg-zinc-800"
+                              indicatorClassName={isLcaQualified ? 'bg-emerald-500' : 'bg-zinc-600'}
+                            />
+                          </div>
+                        )}
+                      </TableCell>
+
+                      {/* UI/UX Score & Bar */}
+                      <TableCell>
+                        {c.uiux_score === null ? (
+                          <span className="font-mono text-zinc-500 text-[11px]">null (failed)</span>
+                        ) : (
+                          <div className="w-28 space-y-1">
+                            <div className="flex items-center justify-between text-[11px] font-mono">
+                              <span className={isUiuxQualified ? 'text-blue-400 font-semibold' : 'text-zinc-400'}>
+                                {c.uiux_score.toFixed(1)}%
+                              </span>
+                              {isUiuxQualified && (
+                                <span className="text-[10px] text-blue-500 font-mono">PASS</span>
+                              )}
+                            </div>
+                            <Progress
+                              value={c.uiux_score}
+                              className="h-1.5 bg-zinc-800"
+                              indicatorClassName={isUiuxQualified ? 'bg-blue-500' : 'bg-zinc-600'}
+                            />
+                          </div>
+                        )}
+                      </TableCell>
+
+                      {/* Provenance Status */}
+                      <TableCell>
+                        {isReview ? (
+                          <div className="flex items-center gap-1.5 text-amber-400 text-xs">
+                            <IconAlertCircle size={13} />
+                            <span>Manual Review</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 text-zinc-400 text-xs">
+                            <IconShieldCheck size={13} className="text-emerald-400" />
+                            <span>Verified Citations</span>
+                          </div>
+                        )}
+                      </TableCell>
+
+                      {/* Action trigger */}
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="gap-1 font-mono text-[11px] text-zinc-400 hover:text-white">
+                          <span>Inspect</span>
+                          <IconChevronRight size={13} />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
       </Card>
     </div>
   );

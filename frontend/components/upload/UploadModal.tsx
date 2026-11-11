@@ -109,12 +109,12 @@ export default function UploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg rounded-xl border border-zinc-800 bg-[#0d0e11] p-6 shadow-2xl text-left">
+      <div className="relative w-full max-w-lg rounded-xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl text-left">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
           <div>
-            <h3 className="text-sm font-semibold text-white">Upload Candidate Resume</h3>
-            <p className="text-xs text-zinc-400 mt-0.5">Ingest PDF or DOCX file into the dual-role evaluation pipeline</p>
+            <h3 className="text-sm font-semibold text-zinc-100">Screen New Candidate Resume</h3>
+            <p className="text-xs text-zinc-400 mt-0.5">Ingest PDF or DOCX file into the screening & evaluation pipeline</p>
           </div>
           <Button
             variant="ghost"
@@ -141,10 +141,10 @@ export default function UploadModal({
               onClick={() => fileInputRef.current?.click()}
               className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${
                 dragActive
-                  ? 'border-[#FF5729] bg-[#FF5729]/5'
+                  ? 'border-zinc-300 bg-zinc-900/60'
                   : selectedFile
-                  ? 'border-emerald-800/80 bg-emerald-950/20'
-                  : 'border-zinc-800 hover:border-zinc-700 bg-zinc-950/60'
+                  ? 'border-emerald-700/80 bg-emerald-950/20'
+                  : 'border-zinc-800 hover:border-zinc-700 bg-zinc-900/20'
               }`}
             >
               <input
@@ -173,7 +173,7 @@ export default function UploadModal({
                     <IconUpload size={16} />
                   </div>
                   <p className="text-xs text-zinc-200">
-                    Drag and drop resume here, or <span className="text-[#FF5729] font-medium">browse</span>
+                    Drag and drop resume here, or <span className="text-zinc-100 font-semibold underline">browse file</span>
                   </p>
                   <p className="text-[11px] text-zinc-500">
                     Supports DOCX and PDF (Max 15MB)
@@ -183,17 +183,17 @@ export default function UploadModal({
             </div>
 
             {/* Auto-process Toggle */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-950/60 border border-zinc-800">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/30 border border-zinc-800">
               <input
                 id="autoProcess"
                 type="checkbox"
                 checked={autoProcess}
                 onChange={(e) => setAutoProcess(e.target.checked)}
-                className="rounded border-zinc-700 bg-zinc-900 text-[#FF5729] focus:ring-0 cursor-pointer"
+                className="rounded border-zinc-700 bg-zinc-900 text-zinc-100 focus:ring-0 cursor-pointer"
               />
               <label htmlFor="autoProcess" className="text-xs text-zinc-400 cursor-pointer">
-                <span className="font-medium text-zinc-200 block">Immediate AI Qualification Evaluation</span>
-                Automatically extract structured candidate claims and calculate match scores for both roles.
+                <span className="font-medium text-zinc-200 block">Immediate AI Pipeline Processing</span>
+                Automatically extract structured candidate claims, verify citations, and calculate benchmark match scores.
               </label>
             </div>
 
@@ -227,7 +227,7 @@ export default function UploadModal({
                 {isUploading ? (
                   <span>Processing Pipeline...</span>
                 ) : (
-                  <span>Upload & Ingest</span>
+                  <span>Upload & Screen</span>
                 )}
               </Button>
             </div>
@@ -248,8 +248,8 @@ export default function UploadModal({
                 </span>
               </div>
               <p className="text-xs text-zinc-400 mt-1">{uploadResult.message}</p>
-              <div className="mt-3 p-3 rounded bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-300 space-y-1">
-                <div>Candidate Code: <span className="text-[#FF5729] font-bold">{uploadResult.candidate_code}</span></div>
+              <div className="mt-3 p-3 rounded bg-zinc-900/60 border border-zinc-800 text-xs font-mono text-zinc-300 space-y-1">
+                <div>Candidate Code: <span className="text-zinc-100 font-bold">{uploadResult.candidate_code}</span></div>
                 <div>Status: <span className="text-emerald-400">{uploadResult.processing_status}</span></div>
                 <div className="text-[10px] text-zinc-500 truncate">SHA-256: {uploadResult.sha256}</div>
               </div>
@@ -257,7 +257,7 @@ export default function UploadModal({
 
             <div className="flex items-center justify-end gap-2 pt-1">
               <Button variant="outline" size="sm" onClick={resetState}>
-                Upload Another
+                Screen Another
               </Button>
               {onCandidateSelected && (
                 <Button

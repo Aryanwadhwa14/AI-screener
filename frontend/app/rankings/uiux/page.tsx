@@ -25,7 +25,7 @@ export default function UIUXRankingPage() {
         setCandidates(res.rankings);
       })
       .catch((err) => {
-        if (isMounted) setError(err.message || 'Failed to load UI/UX rankings.');
+        if (!isMounted) setError(err.message || 'Failed to load UI/UX rankings.');
       })
       .finally(() => {
         if (isMounted) setLoading(false);
@@ -36,55 +36,59 @@ export default function UIUXRankingPage() {
     };
   }, [refreshTrigger]);
 
+  const qualifiedCount = candidates.filter((c) => c.is_qualified).length;
+
   return (
     <div className="space-y-4">
-      {/* Role Header Banner */}
-      <Card>
+      {/* Position Header Banner */}
+      <Card className="bg-zinc-900/40 border-zinc-800/80">
         <CardHeader className="p-5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <Badge variant="default" className="font-mono text-[10px]">ROLE 2</Badge>
-                <span className="text-xs font-mono text-zinc-400">Fully Remote • 0–1 Yrs Target Exp</span>
+                <Badge variant="secondary" className="font-mono text-[10px]">
+                  REQUISITION 02 • DESIGN & PRODUCT
+                </Badge>
+                <span className="text-xs font-mono text-zinc-500">Fully Remote • 0–1 Years Target Experience</span>
               </div>
-              <CardTitle className="text-lg text-white">
-                UI/UX Design Intern Rankings
+              <CardTitle className="text-xl text-zinc-100">
+                Product & UI/UX Design Specialist
               </CardTitle>
-              <CardDescription className="text-xs text-zinc-400 mt-1 max-w-3xl">
-                Canonical JD2 Grounding: Figma interactive prototyping & design systems (30 pts), user research methodologies & cognitive psychology (25 pts), wireframing, and portfolio deliverables.
+              <CardDescription className="text-xs text-zinc-400 mt-1 max-w-3xl leading-relaxed">
+                Requisition requirements: Figma prototyping & design component systems (30 pts), user research methodologies and cognitive psychology (25 pts), user journey mapping, and case studies.
               </CardDescription>
             </div>
 
-            <div className="flex items-center gap-4 bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 shrink-0">
+            <div className="flex items-center gap-4 bg-zinc-950/80 p-3 rounded-lg border border-zinc-800 shrink-0">
               <div>
-                <span className="text-[10px] uppercase font-mono text-zinc-400 block">Pass Threshold</span>
-                <span className="text-lg font-bold font-mono text-blue-400">≥ 50.0 / 100</span>
+                <span className="text-[10px] uppercase font-mono text-zinc-500 block">Benchmark</span>
+                <span className="text-base font-bold font-mono text-blue-400">≥ 50.0%</span>
               </div>
-              <div className="w-px h-7 bg-zinc-800" />
+              <div className="h-8 w-px bg-zinc-800" />
               <div>
-                <span className="text-[10px] uppercase font-mono text-zinc-400 block">Total Evaluated</span>
-                <span className="text-lg font-bold font-mono text-white">{candidates.length}</span>
+                <span className="text-[10px] uppercase font-mono text-zinc-500 block">Qualified</span>
+                <span className="text-base font-bold font-mono text-zinc-100">{qualifiedCount} / {candidates.length}</span>
               </div>
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      {error && (
-        <div className="p-3 rounded-md bg-rose-950/40 border border-rose-900/60 text-xs text-rose-300">
+      {/* Candidates Table */}
+      {error ? (
+        <div className="p-6 text-center text-rose-400 text-xs rounded-lg border border-rose-900/50 bg-rose-950/20">
           {error}
         </div>
+      ) : (
+        <RankingTable
+          roleKey="UI_UX"
+          roleTitle="Product & UI/UX Design Specialist"
+          threshold={50.0}
+          candidates={candidates}
+          onSelectCandidate={openCandidateDrawer}
+          isLoading={loading}
+        />
       )}
-
-      {/* Main Ranking Table */}
-      <RankingTable
-        roleKey="UI_UX"
-        roleTitle="UI/UX Designer Intern"
-        threshold={50.0}
-        candidates={candidates}
-        onSelectCandidate={openCandidateDrawer}
-        isLoading={loading}
-      />
     </div>
   );
 }

@@ -3,69 +3,69 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { IconShieldCheck, IconLayers, IconSparkles } from '@/components/ui/icons';
 
 export default function MethodologyPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <Card>
+      <Card className="bg-zinc-900/40 border-zinc-800/80">
         <CardHeader className="p-6">
-          <Badge variant="default" className="font-mono text-[10px] w-fit mb-2">
-            GOVERNANCE & AUDIT TRAIL
+          <Badge variant="secondary" className="font-mono text-[10px] w-fit mb-2">
+            AI GOVERNANCE & EVALUATION ENGINE
           </Badge>
-          <CardTitle className="text-xl text-white">
-            Scoring Methodology & Verification Rules
+          <CardTitle className="text-2xl text-zinc-100">
+            Screening Engine & Verification Architecture
           </CardTitle>
           <CardDescription className="text-xs text-zinc-400 mt-1 max-w-3xl leading-relaxed">
-            Grounded directly in canonical Job Descriptions: JD1 (Life Cycle Assessment Consultant) and JD2 (UI/UX Design Intern).
-            Every score is calculated deterministically in Python from verified physical resume text snippets; LLMs do not invent or interpolate scores.
+            Every candidate evaluation is computed deterministically from verified resume text. The system enforces strict provenance checking: unverified claims are rejected, and scoring formulas are executed via versioned, auditable Python algorithms.
           </CardDescription>
         </CardHeader>
       </Card>
 
       {/* Core Architectural Guarantees */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card className="p-4 space-y-2">
+        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
           <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 block font-semibold">
             Deterministic Engine
           </span>
-          <h4 className="text-sm font-semibold text-white">Zero Non-Deterministic Scoring</h4>
+          <h4 className="text-sm font-semibold text-zinc-100">Zero Non-Deterministic Drift</h4>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            LLMs extract structured candidate facts and quote source snippets; Python scoring algorithms independently calculate all final scores. Identical input yields identical rank every time.
+            Candidate extraction is validated with regex and string tokenization; scoring arithmetic is executed strictly in Python. Identical resume content yields an identical score and rank every single run.
           </p>
         </Card>
 
-        <Card className="p-4 space-y-2">
+        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
           <span className="text-[11px] font-mono uppercase tracking-wider text-blue-400 block font-semibold">
             Verbatim Verification
           </span>
-          <h4 className="text-sm font-semibold text-white">Zero Hallucination Tolerance</h4>
+          <h4 className="text-sm font-semibold text-zinc-100">Zero Hallucination Guarantee</h4>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Every claim cited in candidate evaluations must match the resume text verbatim. Unverified claims are stripped and penalize extraction confidence.
+            Every skill and experience claim cited in a candidate dossier must exist verbatim in the source document. Any unverified citation is automatically pruned and reduces extraction confidence.
           </p>
         </Card>
 
-        <Card className="p-4 space-y-2">
+        <Card className="bg-zinc-900/30 border-zinc-800/80 p-4 space-y-2 hover:border-zinc-700/80 transition-colors">
           <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400 block font-semibold">
-            Fairness & Unknowns
+            Fairness & Audit
           </span>
-          <h4 className="text-sm font-semibold text-white">Non-Punitive Unknown Handling</h4>
+          <h4 className="text-sm font-semibold text-zinc-100">Demographic Bias Immunity</h4>
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Empty documents and failed extractions receive a null score and manual-review status (never zero). Missing relocation willingness is marked UNKNOWN and given neutral credit (never assumed False).
+            Candidate evaluations exclude demographic indicators (gender, age, ethnicity, photos). Empty or unreadable files produce an explicit null score with manual-review status rather than an arbitrary 0.
           </p>
         </Card>
       </div>
 
-      {/* Role Scoring Criteria Breakdown */}
+      {/* Requisition Evaluation Criteria Grids */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* LCA Criteria */}
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+        {/* Requisition 1 */}
+        <Card className="bg-zinc-900/30 border-zinc-800/80 p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
             <div>
-              <span className="text-[10px] uppercase font-mono font-bold text-[#FF5729]">Role 1 Criteria</span>
-              <h3 className="text-sm font-bold text-white">LCA Consultant (100 Pts Max)</h3>
+              <span className="text-[10px] uppercase font-mono font-bold text-emerald-400">Requisition 01</span>
+              <h3 className="text-sm font-bold text-zinc-100">Sustainability & LCA Specialist (100 Pts Max)</h3>
             </div>
-            <Badge variant="success">Threshold 55.0</Badge>
+            <Badge variant="success">Benchmark ≥ 55%</Badge>
           </div>
 
           <div className="space-y-2">
@@ -73,7 +73,7 @@ export default function MethodologyPage() {
               {
                 name: 'GaBi / SimaPro Tool Proficiency',
                 weight: '35 pts',
-                desc: 'Explicit mentions of GaBi, SimaPro, OpenLCA, or certified LCA calculation packages.',
+                desc: 'Explicit verified experience with GaBi, SimaPro, OpenLCA, or certified LCA calculation suites.',
               },
               {
                 name: 'ISO 14040 / 14044 Standards Conformance',
@@ -83,122 +83,107 @@ export default function MethodologyPage() {
               {
                 name: 'Relevant Professional Experience',
                 weight: '20 pts',
-                desc: '2–3 years baseline per canonical JD1 lines 29–30. Graded scale based on verified tenure.',
+                desc: 'Graded tenure scale targeting 2–3 years baseline environmental engineering background.',
               },
               {
                 name: 'Educational Background',
                 weight: '10 pts',
-                desc: 'Degree in Environmental Engineering, Sustainability, Chemical Engineering, or related.',
+                desc: 'Degree in Environmental Engineering, Sustainability, Chemical Engineering, or related technical disciplines.',
               },
               {
                 name: 'Domain Knowledge (EPD, GHG, Circularity)',
                 weight: '5 pts',
-                desc: 'Environmental Product Declarations, Scope 1/2/3 greenhouse gas accounting.',
+                desc: 'Environmental Product Declarations, Scope 1/2/3 greenhouse gas accounting, circular economy.',
               },
               {
-                name: 'Chennai Onsite Relocation Willingness',
+                name: 'Geographic Alignment (Chennai Onsite)',
                 weight: '5 pts',
-                desc: 'Chennai local (5 pts), UNKNOWN (2 pts neutral), Explicit refusal (0 pts). Never infer false.',
+                desc: 'Willingness to relocate to Chennai or current residence in Tamil Nadu. Unknown values default neutrally to 2/5 pts.',
               },
-            ].map((crit, idx) => (
-              <div key={idx} className="p-2.5 rounded bg-zinc-900/60 border border-zinc-800/80 flex justify-between gap-3">
-                <div className="space-y-0.5">
-                  <span className="text-xs font-medium text-zinc-200 block">{crit.name}</span>
-                  <p className="text-[11px] text-zinc-400">{crit.desc}</p>
+            ].map((c, i) => (
+              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-zinc-950/60 border border-zinc-800/60">
+                <div className="pr-3">
+                  <div className="text-xs font-semibold text-zinc-200">{c.name}</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">{c.desc}</div>
                 </div>
-                <span className="text-xs font-mono font-bold text-[#FF5729] shrink-0">{crit.weight}</span>
+                <span className="font-mono text-xs font-bold text-emerald-400 shrink-0">{c.weight}</span>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* UI/UX Criteria */}
-        <Card className="p-5 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+        {/* Requisition 2 */}
+        <Card className="bg-zinc-900/30 border-zinc-800/80 p-5 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
             <div>
-              <span className="text-[10px] uppercase font-mono font-bold text-blue-400">Role 2 Criteria</span>
-              <h3 className="text-sm font-bold text-white">UI/UX Designer Intern (100 Pts Max)</h3>
+              <span className="text-[10px] uppercase font-mono font-bold text-blue-400">Requisition 02</span>
+              <h3 className="text-sm font-bold text-zinc-100">Product & UI/UX Design Specialist (100 Pts Max)</h3>
             </div>
-            <Badge variant="info">Threshold 50.0</Badge>
+            <Badge variant="info">Benchmark ≥ 50%</Badge>
           </div>
 
           <div className="space-y-2">
             {[
               {
-                name: 'Figma & Design Tooling Mastery',
+                name: 'Figma & Component Design Systems',
                 weight: '30 pts',
-                desc: 'Proficiency in Figma (auto-layout, design systems, interactive prototyping, components).',
+                desc: 'Component libraries, auto-layout, design tokens, interactive prototyping, and handoff assets.',
               },
               {
                 name: 'User Research & Cognitive Psychology',
                 weight: '25 pts',
-                desc: 'User testing, cognitive biases, mental models, empathy mapping, heuristic evaluations.',
+                desc: 'Usability testing, user journey mapping, behavioral economics, qualitative interviews.',
               },
               {
-                name: 'Target Experience Alignment',
+                name: 'Portfolio & Case Study Deliverables',
                 weight: '20 pts',
-                desc: '0–1 years target intern experience per JD2 line 19. Designed specifically for early-career.',
+                desc: 'Evidence of published wireframes, end-to-end design artifacts, design thinking case studies.',
               },
               {
-                name: 'Education / Design Coursework',
-                weight: '10 pts',
-                desc: 'HCI, Design, Computer Science, Psychology, or certified UI/UX bootcamps.',
-              },
-              {
-                name: 'Tangible Projects & Portfolio Deliverables',
+                name: 'Professional / Internship Experience',
                 weight: '15 pts',
-                desc: 'Case studies, mobile/web mockups, Behance/Dribbble/Notion/portfolio URLs.',
+                desc: 'Targeting 0–1 years practical experience in digital product design or high-growth environments.',
               },
-            ].map((crit, idx) => (
-              <div key={idx} className="p-2.5 rounded bg-zinc-900/60 border border-zinc-800/80 flex justify-between gap-3">
-                <div className="space-y-0.5">
-                  <span className="text-xs font-medium text-zinc-200 block">{crit.name}</span>
-                  <p className="text-[11px] text-zinc-400">{crit.desc}</p>
+              {
+                name: 'Relevant Education / Human-Computer Interaction',
+                weight: '10 pts',
+                desc: 'Studies in Design, Cognitive Science, Computer Science, Human-Computer Interaction, or related.',
+              },
+            ].map((c, i) => (
+              <div key={i} className="flex items-start justify-between p-2 rounded-md bg-zinc-950/60 border border-zinc-800/60">
+                <div className="pr-3">
+                  <div className="text-xs font-semibold text-zinc-200">{c.name}</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">{c.desc}</div>
                 </div>
-                <span className="text-xs font-mono font-bold text-blue-400 shrink-0">{crit.weight}</span>
+                <span className="font-mono text-xs font-bold text-blue-400 shrink-0">{c.weight}</span>
               </div>
             ))}
           </div>
         </Card>
       </div>
 
-      {/* 5-Tier Tie-Breaking Protocol */}
-      <Card className="p-5 space-y-3">
-        <CardTitle className="text-sm text-white">Deterministic 5-Tier Tie-Breaking Protocol</CardTitle>
-        <CardDescription className="text-xs text-zinc-400">
-          When candidates achieve identical scores, ranks are determined deterministically using the following cascading hierarchy:
-        </CardDescription>
-
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-1">
-          <div className="p-3 rounded bg-zinc-900/80 border border-zinc-800 text-center space-y-1">
-            <span className="text-[10px] uppercase font-mono text-[#FF5729]">Tier 1</span>
-            <div className="text-xs font-medium text-zinc-200">Role Match Score</div>
-            <span className="text-[10px] text-zinc-400 block">Descending (null last)</span>
-          </div>
-
-          <div className="p-3 rounded bg-zinc-900/80 border border-zinc-800 text-center space-y-1">
-            <span className="text-[10px] uppercase font-mono text-[#FF5729]">Tier 2</span>
-            <div className="text-xs font-medium text-zinc-200">Extraction Confidence</div>
-            <span className="text-[10px] text-zinc-400 block">Descending</span>
-          </div>
-
-          <div className="p-3 rounded bg-zinc-900/80 border border-zinc-800 text-center space-y-1">
-            <span className="text-[10px] uppercase font-mono text-[#FF5729]">Tier 3</span>
-            <div className="text-xs font-medium text-zinc-200">Primary Criterion Score</div>
-            <span className="text-[10px] text-zinc-400 block">GaBi / Figma</span>
-          </div>
-
-          <div className="p-3 rounded bg-zinc-900/80 border border-zinc-800 text-center space-y-1">
-            <span className="text-[10px] uppercase font-mono text-[#FF5729]">Tier 4</span>
-            <div className="text-xs font-medium text-zinc-200">Verified Snippet Count</div>
-            <span className="text-[10px] text-zinc-400 block">Descending</span>
-          </div>
-
-          <div className="p-3 rounded bg-zinc-900/80 border border-zinc-800 text-center space-y-1">
-            <span className="text-[10px] uppercase font-mono text-[#FF5729]">Tier 5</span>
-            <div className="text-xs font-medium text-zinc-200">Candidate Code</div>
-            <span className="text-[10px] text-zinc-400 block">Ascending (CAND-001)</span>
-          </div>
+      {/* 5-Tier Deterministic Tie-Breaking Protocol */}
+      <Card className="bg-zinc-900/30 border-zinc-800/80 p-5">
+        <h3 className="text-sm font-semibold text-zinc-100 mb-2">5-Tier Deterministic Tie-Breaking Protocol</h3>
+        <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
+          When two or more candidates receive identical total scores, the screening engine breaks ties deterministically without randomness:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+          {[
+            { step: '1', title: 'Total Fit Score', desc: 'Higher primary score ranks higher (null values placed last).' },
+            { step: '2', title: 'Extraction Confidence', desc: 'Higher physical text verification confidence percentage.' },
+            { step: '3', title: 'Core Tool Points', desc: 'Candidate with higher points on primary requirement (GaBi or Figma).' },
+            { step: '4', title: 'Evidence Snippets', desc: 'Candidate with greater count of verified physical citations.' },
+            { step: '5', title: 'Candidate Code', desc: 'Alphabetical deterministic sort by candidate ID (e.g. CAND-014 < CAND-017).' },
+          ].map((tier, i) => (
+            <div key={i} className="p-3 rounded-lg bg-zinc-950/80 border border-zinc-800/80 text-center">
+              <span className="inline-block w-5 h-5 rounded-full bg-zinc-800 text-[10px] font-mono font-bold text-zinc-300 mb-1.5">
+                {tier.step}
+              </span>
+              <div className="text-xs font-semibold text-zinc-200 mb-1">{tier.title}</div>
+              <div className="text-[10px] text-zinc-500 leading-normal">{tier.desc}</div>
+            </div>
+          ))}
         </div>
       </Card>
     </div>

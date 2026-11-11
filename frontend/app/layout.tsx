@@ -3,8 +3,8 @@ import './globals.css';
 import AppShell from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
-  title: 'GFI AI Resume Screener — Dual-Role Candidate Ranking',
-  description: 'AI-assisted resume screening, structured extraction, deterministic dual-role scoring, and explainable ranking.',
+  title: 'ScreenAI ATS — AI Resume Screening & Evaluation Platform',
+  description: 'Production-grade AI candidate screening, deterministic multi-role scoring, and verifiable evidence provenance.',
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-[#020203] text-[#F4F4F6] antialiased selection:bg-[#FF5729]/30 selection:text-white">
+      <body className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-zinc-800 selection:text-zinc-100">
         <AppShell>{children}</AppShell>
       </body>
     </html>
