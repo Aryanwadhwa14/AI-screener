@@ -30,7 +30,7 @@ import {
 type DomainFilter = 'ALL' | 'QUALIFIED' | 'LCA' | 'UI_UX' | 'REVIEW';
 
 export default function HomePage() {
-  const { openCandidateDrawer, openUploadModal, refreshTrigger } = useReviewer();
+  const { openCandidateDrawer, openUploadModal, openPostJobModal, jobs, refreshTrigger } = useReviewer();
   const [candidates, setCandidates] = useState<CandidateSummaryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState<DomainFilter>('ALL');
@@ -129,191 +129,178 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner / ATS Overview Header */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-              Talent Screening & Sourcing Platform
-            </span>
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Candidate Screening Pipeline
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            Candidate Pipeline
           </h1>
-          <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-            Automated resume parsing, deterministic fit scoring, and verifiable evidence provenance across active requisitions.
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Automated resume parsing and verified evidence scoring across open positions.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <Button onClick={openUploadModal} className="gap-2 shrink-0">
-            <IconUpload size={14} />
-            <span>Screen New Resume</span>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={openPostJobModal} className="gap-1.5">
+            <IconBriefcase size={13} />
+            <span>Post a Job</span>
+          </Button>
+          <Button size="sm" onClick={openUploadModal} className="gap-1.5">
+            <IconUpload size={13} />
+            <span>Screen Resume</span>
           </Button>
         </div>
       </div>
 
-      {/* Metric KPI Cards */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-              Screened Pool
-            </span>
-            <div className="text-2xl font-bold text-foreground tabular-nums mt-0.5">
+            <span className="text-[11px] font-medium text-muted-foreground">Total Applicants</span>
+            <div className="text-2xl font-semibold text-foreground tabular-nums mt-0.5">
               {loading ? '—' : stats.totalCandidates}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
-            47 Active Resumes Parsed
+            47 Resumes in pool
           </CardContent>
         </Card>
 
         <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                Sustainability & LCA
-              </span>
-              <Badge variant="success">Bench ≥ 55%</Badge>
+              <span className="text-[11px] font-medium text-muted-foreground">LCA Matches</span>
+              <Badge variant="success">≥ 55%</Badge>
             </div>
-            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums mt-0.5">
+            <div className="text-2xl font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.lcaQualified}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
-            Environmental Impact Specialists
+            GaBi & SimaPro specialists
           </CardContent>
         </Card>
 
         <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                Product & UI/UX
-              </span>
-              <Badge variant="info">Bench ≥ 50%</Badge>
+              <span className="text-[11px] font-medium text-muted-foreground">UI/UX Matches</span>
+              <Badge variant="info">≥ 50%</Badge>
             </div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 tabular-nums mt-0.5">
+            <div className="text-2xl font-semibold text-blue-600 dark:text-blue-400 tabular-nums mt-0.5">
               {loading ? '—' : stats.uiuxQualified}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
-            Design & Usability Specialists
+            Figma & research designers
           </CardContent>
         </Card>
 
         <Card className="hover:border-foreground/20 transition-colors">
           <CardHeader className="p-4 pb-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
-                Audit Status
-              </span>
-              <Badge variant={stats.manualReviewRequired > 0 ? 'warning' : 'default'}>
-                {stats.manualReviewRequired > 0 ? 'Review Needed' : '100% Verified'}
+              <span className="text-[11px] font-medium text-muted-foreground">Needs Review</span>
+              <Badge variant={stats.manualReviewRequired > 0 ? 'warning' : 'secondary'}>
+                {stats.manualReviewRequired > 0 ? 'Action Required' : 'Clean'}
               </Badge>
             </div>
-            <div className="text-2xl font-bold text-foreground tabular-nums mt-0.5">
-              {loading ? '—' : stats.manualReviewRequired === 0 ? '100%' : `${stats.manualReviewRequired} Flag`}
+            <div className="text-2xl font-semibold text-foreground tabular-nums mt-0.5">
+              {loading ? '—' : stats.manualReviewRequired}
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
-            {stats.manualReviewRequired > 0 ? 'CAND-005 Empty Document' : 'Zero hallucinated quotes'}
+            {stats.manualReviewRequired > 0 ? 'Empty document flag' : 'Zero unparsed files'}
           </CardContent>
         </Card>
       </div>
 
-      {/* Active Requisitions / Open Positions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Requisition 1 */}
-        <Card className="flex flex-col justify-between hover:border-foreground/20 transition-all">
-          <CardHeader className="p-5 pb-3">
-            <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                REQUISITION 01 • ESG & SUSTAINABILITY
-              </Badge>
-              <span className="text-xs font-mono text-muted-foreground">Onsite • 2–3 Yrs Target</span>
-            </div>
-            <CardTitle className="text-base text-foreground">
-              Sustainability & Life Cycle Assessment (LCA) Specialist
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              Evaluating candidates on GaBi / SimaPro modeling tools, ISO 14040/14044 conformance, and life cycle inventory (LCI) carbon accounting.
-            </CardDescription>
-            <div className="flex flex-wrap gap-1.5 pt-3">
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">GaBi Modeling</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">SimaPro</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">ISO 14040/44</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">EPD Development</span>
-            </div>
-          </CardHeader>
-          <CardContent className="p-5 pt-3 border-t flex items-center justify-between">
-            <span className="text-xs font-mono text-muted-foreground">
-              Qualified Match: <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{stats.lcaQualified}</span> candidates
-            </span>
-            <Link href="/rankings/lca">
-              <Button variant="outline" size="sm" className="gap-1">
-                <span>View Candidates</span>
-                <IconChevronRight size={13} />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      {/* Dynamic Open Positions List */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-foreground">Open Positions ({jobs.length})</h2>
+          <Button variant="ghost" size="sm" onClick={openPostJobModal} className="h-7 text-xs text-muted-foreground">
+            + Add Position
+          </Button>
+        </div>
 
-        {/* Requisition 2 */}
-        <Card className="flex flex-col justify-between hover:border-foreground/20 transition-all">
-          <CardHeader className="p-5 pb-3">
-            <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                REQUISITION 02 • DESIGN & PRODUCT
-              </Badge>
-              <span className="text-xs font-mono text-muted-foreground">Remote • 0–1 Yrs Target</span>
-            </div>
-            <CardTitle className="text-base text-foreground">
-              Product & UI/UX Design Specialist
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              Evaluating candidates on Figma prototyping, design system governance, user research methodologies, and cognitive psychology principles.
-            </CardDescription>
-            <div className="flex flex-wrap gap-1.5 pt-3">
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Figma</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Design Systems</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">User Research</span>
-              <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground font-mono">Wireframing</span>
-            </div>
-          </CardHeader>
-          <CardContent className="p-5 pt-3 border-t flex items-center justify-between">
-            <span className="text-xs font-mono text-muted-foreground">
-              Qualified Match: <span className="text-blue-600 dark:text-blue-400 font-semibold">{stats.uiuxQualified}</span> candidates
-            </span>
-            <Link href="/rankings/uiux">
-              <Button variant="outline" size="sm" className="gap-1">
-                <span>View Candidates</span>
-                <IconChevronRight size={13} />
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {jobs.map((job) => {
+            const isLca = job.id === 'lca-consultant';
+            const isUiux = job.id === 'uiux-designer';
+            const href = isLca ? '/rankings/lca' : isUiux ? '/rankings/uiux' : '#';
+
+            return (
+              <Card key={job.id} className="flex flex-col justify-between hover:border-foreground/25 transition-all">
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <Badge variant="secondary" className="text-[10px]">
+                      {job.department}
+                    </Badge>
+                    <span className="text-[11px] text-muted-foreground">{job.location}</span>
+                  </div>
+                  <CardTitle className="text-sm text-foreground leading-snug">{job.title}</CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                    {job.description}
+                  </CardDescription>
+
+                  <div className="flex flex-wrap gap-1 pt-2.5">
+                    {job.skills.slice(0, 3).map((sk, idx) => (
+                      <span key={idx} className="px-1.5 py-0.5 rounded bg-muted text-[10px] text-muted-foreground font-mono">
+                        {sk}
+                      </span>
+                    ))}
+                    {job.skills.length > 3 && (
+                      <span className="text-[10px] text-muted-foreground self-center">+{job.skills.length - 3}</span>
+                    )}
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-4 pt-2 border-t flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground text-[11px]">
+                    Min Score: <span className="font-semibold text-foreground">{job.benchmarkThreshold}%</span>
+                  </span>
+                  {href !== '#' ? (
+                    <Link href={href}>
+                      <Button variant="outline" size="sm" className="h-7 text-xs gap-1">
+                        <span>Rankings</span>
+                        <IconChevronRight size={12} />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => openUploadModal()}
+                    >
+                      Screen Candidates
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Candidate Pipeline Data Table */}
+      {/* Candidate Pipeline Table */}
       <Card>
-        <CardHeader className="p-5 pb-4 border-b">
+        <CardHeader className="p-4 pb-3 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="text-sm font-semibold text-foreground">
-                Applicant Pool & Evaluation Register
+                All Screened Candidates
               </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                Click any candidate row to inspect verbatim resume quotes, full criterion scoring breakdown, and raw extraction.
+              <CardDescription className="text-xs text-muted-foreground">
+                Click any row to view candidate score breakdown and quoted resume evidence.
               </CardDescription>
             </div>
 
             {/* Quick Search */}
-            <div className="relative w-full sm:w-64">
+            <div className="relative w-full sm:w-60">
               <IconSearch size={14} className="absolute left-3 top-2.5 text-muted-foreground" />
               <Input
-                placeholder="Search candidates, codes, skills..."
+                placeholder="Search candidate or filename..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9 h-8 text-xs"
@@ -322,68 +309,73 @@ export default function HomePage() {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-3">
+          <div className="flex flex-wrap items-center gap-1.5 pt-2">
             <Button
               variant={activeFilter === 'ALL' ? 'default' : 'outline'}
               size="sm"
+              className="h-7 text-xs"
               onClick={() => setActiveFilter('ALL')}
             >
-              All Applicants ({candidates.length})
+              All ({candidates.length})
             </Button>
             <Button
               variant={activeFilter === 'QUALIFIED' ? 'default' : 'outline'}
               size="sm"
+              className="h-7 text-xs"
               onClick={() => setActiveFilter('QUALIFIED')}
             >
-              Qualified Only ({stats.lcaQualified + stats.uiuxQualified})
+              Qualified ({stats.lcaQualified + stats.uiuxQualified})
             </Button>
             <Button
               variant={activeFilter === 'LCA' ? 'default' : 'outline'}
               size="sm"
+              className="h-7 text-xs"
               onClick={() => setActiveFilter('LCA')}
             >
-              Sustainability & LCA ({stats.lcaQualified})
+              LCA ({stats.lcaQualified})
             </Button>
             <Button
               variant={activeFilter === 'UI_UX' ? 'default' : 'outline'}
               size="sm"
+              className="h-7 text-xs"
               onClick={() => setActiveFilter('UI_UX')}
             >
-              Product & UI/UX ({stats.uiuxQualified})
+              UI/UX ({stats.uiuxQualified})
             </Button>
             <Button
               variant={activeFilter === 'REVIEW' ? 'default' : 'outline'}
               size="sm"
+              className="h-7 text-xs"
               onClick={() => setActiveFilter('REVIEW')}
             >
-              Audit Required ({stats.manualReviewRequired})
+              Review Needed ({stats.manualReviewRequired})
             </Button>
           </div>
         </CardHeader>
 
         <CardContent className="p-0">
           {loading ? (
-            <div className="py-16 text-center text-muted-foreground font-mono text-xs">
-              Loading screened candidates...
+            <div className="py-14 text-center text-muted-foreground text-xs">
+              Loading candidates...
             </div>
           ) : error ? (
-            <div className="py-12 text-center text-destructive text-xs">
+            <div className="py-10 text-center text-destructive text-xs">
               {error}
             </div>
           ) : filteredCandidates.length === 0 ? (
-            <div className="py-16 text-center text-muted-foreground text-xs">
-              No candidates matching current search or filter.
+            <div className="py-14 text-center text-muted-foreground text-xs">
+              No matching candidates found.
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-28 font-mono text-[11px]">Candidate</TableHead>
-                  <TableHead className="font-mono text-[11px]">Primary Domain Fit</TableHead>
-                  <TableHead className="font-mono text-[11px]">LCA Match</TableHead>
-                  <TableHead className="font-mono text-[11px]">UI/UX Match</TableHead>
-                  <TableHead className="font-mono text-[11px]">Provenance Status</TableHead>
-                  <TableHead className="text-right font-mono text-[11px]">Action</TableHead>
+                  <TableHead className="w-28 text-xs font-medium">Candidate</TableHead>
+                  <TableHead className="text-xs font-medium">Primary Match</TableHead>
+                  <TableHead className="text-xs font-medium">LCA Fit</TableHead>
+                  <TableHead className="text-xs font-medium">UI/UX Fit</TableHead>
+                  <TableHead className="text-xs font-medium">Status</TableHead>
+                  <TableHead className="text-right text-xs font-medium">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -398,78 +390,78 @@ export default function HomePage() {
                       onClick={() => openCandidateDrawer(c.id)}
                       className="cursor-pointer"
                     >
-                      {/* Candidate Code & Source File */}
+                      {/* Code & Filename */}
                       <TableCell>
-                        <div className="font-mono font-semibold text-foreground">
+                        <div className="font-mono font-medium text-xs text-foreground">
                           {c.candidate_code}
                         </div>
-                        <div className="text-[11px] text-muted-foreground truncate max-w-[140px]" title={c.original_filename}>
+                        <div className="text-[11px] text-muted-foreground truncate max-w-[130px]" title={c.original_filename}>
                           {c.original_filename}
                         </div>
                       </TableCell>
 
-                      {/* Primary Domain Fit */}
+                      {/* Primary Classification */}
                       <TableCell>
                         {c.classification === 'LCA' ? (
-                          <Badge variant="success">Sustainability & LCA</Badge>
+                          <Badge variant="success">LCA Specialist</Badge>
                         ) : c.classification === 'UI_UX' ? (
-                          <Badge variant="info">Product & UI/UX</Badge>
+                          <Badge variant="info">UI/UX Designer</Badge>
                         ) : c.classification === 'BOTH' ? (
-                          <Badge variant="default">Multi-Disciplinary</Badge>
+                          <Badge variant="default">Dual Match</Badge>
                         ) : isReview ? (
-                          <Badge variant="warning">Empty Document</Badge>
+                          <Badge variant="warning">Empty File</Badge>
                         ) : (
-                          <Badge variant="secondary">Under Threshold</Badge>
+                          <Badge variant="secondary">Below Threshold</Badge>
                         )}
                       </TableCell>
 
-                      {/* LCA Score & Bar */}
+                      {/* LCA Score */}
                       <TableCell>
                         {c.lca_score === null ? (
-                          <span className="font-mono text-muted-foreground text-[11px]">null (failed)</span>
+                          <span className="text-muted-foreground text-xs">—</span>
                         ) : (
-                          <div className="w-28 space-y-1">
-                            <div className="flex items-center justify-between text-[11px] font-mono">
-                              <span className={isLcaQualified ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-muted-foreground'}>
-                                {c.lca_score.toFixed(1)}%
+                          <div className="w-24 space-y-1">
+                            <div className="flex items-center justify-between text-xs font-mono">
+                              <span className={isLcaQualified ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-muted-foreground'}>
+                                {c.lca_score.toFixed(0)}%
                               </span>
                               {isLcaQualified && (
-                                <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-mono">PASS</span>
+                                <span className="text-[10px] text-emerald-600 dark:text-emerald-500 font-sans font-semibold">PASS</span>
                               )}
                             </div>
                             <Progress
                               value={c.lca_score}
                               className="h-1.5"
-                              indicatorClassName={isLcaQualified ? 'bg-emerald-500' : 'bg-muted-foreground/40'}
+                              indicatorClassName={isLcaQualified ? 'bg-emerald-500' : 'bg-muted-foreground/30'}
                             />
                           </div>
                         )}
                       </TableCell>
 
-                      {/* UI/UX Score & Bar */}
+                      {/* UI/UX Score */}
                       <TableCell>
                         {c.uiux_score === null ? (
-                          <span className="font-mono text-muted-foreground text-[11px]">null (failed)</span>
+                          <span className="text-muted-foreground text-xs">—</span>
                         ) : (
-                          <div className="w-28 space-y-1">
-                            <div className="flex items-center justify-between text-[11px] font-mono">
-                              <span className={isUiuxQualified ? 'text-blue-600 dark:text-blue-400 font-semibold' : 'text-muted-foreground'}>
-                                {c.uiux_score.toFixed(1)}%
+                          <div className="w-24 space-y-1">
+                            <div className="flex items-center justify-between text-xs font-mono">
+                              <span className={isUiuxQualified ? 'text-blue-600 dark:text-blue-400 font-medium' : 'text-muted-foreground'}>
+                                {c.uiux_score.toFixed(0)}%
                               </span>
                               {isUiuxQualified && (
-                                <span className="text-[10px] text-blue-600 dark:text-blue-500 font-mono">PASS</span>
+                                <span className="text-[10px] text-blue-600 dark:text-blue-500 font-sans font-semibold">PASS</span>
                               )}
                             </div>
                             <Progress
                               value={c.uiux_score}
                               className="h-1.5"
-                              indicatorClassName={isUiuxQualified ? 'bg-blue-500' : 'bg-muted-foreground/40'}
+                              indicatorClassName={isUiuxQualified ? 'bg-blue-500' : 'bg-muted-foreground/30'}
                             />
                           </div>
                         )}
                       </TableCell>
 
-                      {/* Provenance Status */}
+                      {/* Status */}
                       <TableCell>
                         {isReview ? (
                           <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 text-xs">
@@ -479,14 +471,14 @@ export default function HomePage() {
                         ) : (
                           <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
                             <IconShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" />
-                            <span>Verified Citations</span>
+                            <span>Evidence Verified</span>
                           </div>
                         )}
                       </TableCell>
 
-                      {/* Action trigger */}
+                      {/* Action */}
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="gap-1 font-mono text-[11px] text-muted-foreground hover:text-foreground">
+                        <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-foreground">
                           <span>Inspect</span>
                           <IconChevronRight size={13} />
                         </Button>

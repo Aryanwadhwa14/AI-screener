@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { useReviewer } from './ReviewerContext';
 import { IconUpload, IconBriefcase, IconUsers, IconLayers } from '@/components/ui/icons';
 
 interface NavbarProps {
@@ -14,6 +15,7 @@ interface NavbarProps {
 
 export default function Navbar({ onOpenUpload }: NavbarProps) {
   const pathname = usePathname();
+  const { openPostJobModal } = useReviewer();
   const [isBackendHealthy, setIsBackendHealthy] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -36,9 +38,9 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
 
   const navLinks = [
     { href: '/', label: 'Candidates', icon: IconUsers },
-    { href: '/rankings/lca', label: 'Sustainability & LCA', icon: IconBriefcase },
-    { href: '/rankings/uiux', label: 'Product & UI/UX', icon: IconBriefcase },
-    { href: '/methodology', label: 'Screening Engine', icon: IconLayers },
+    { href: '/rankings/lca', label: 'LCA Specialist', icon: IconBriefcase },
+    { href: '/rankings/uiux', label: 'UI/UX Design', icon: IconBriefcase },
+    { href: '/methodology', label: 'Methodology', icon: IconLayers },
   ];
 
   return (
@@ -52,10 +54,7 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
             </span>
             <div className="flex items-baseline gap-1.5">
               <span className="font-semibold text-sm tracking-tight text-foreground group-hover:opacity-80 transition-opacity">
-                ScreenAI
-              </span>
-              <span className="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-muted text-muted-foreground border">
-                ATS
+                Rankres
               </span>
             </div>
           </Link>
@@ -84,7 +83,7 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {/* Health Indicator */}
           <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md border bg-muted/30 text-[11px] font-mono text-muted-foreground">
             <span
@@ -100,17 +99,28 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
               {isBackendHealthy === null
                 ? 'Connecting...'
                 : isBackendHealthy
-                ? 'Engine Active'
+                ? 'Online'
                 : 'Offline'}
             </span>
           </div>
 
-          {/* Dark / Light Mode Toggle */}
+          {/* Theme Toggle */}
           <ThemeToggle />
+
+          {/* Post a Job Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={openPostJobModal}
+            className="gap-1.5 font-medium"
+          >
+            <IconBriefcase size={13} />
+            <span>Post a Job</span>
+          </Button>
 
           {/* Screen Resume CTA */}
           <Button onClick={onOpenUpload} size="sm" className="gap-1.5 font-medium">
-            <IconUpload size={14} />
+            <IconUpload size={13} />
             <span>Screen Resume</span>
           </Button>
         </div>

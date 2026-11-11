@@ -89,11 +89,10 @@ export default function RankingTable({
               <button
                 key={tab.id}
                 onClick={() => setFilterStatus(tab.id)}
-                className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
-                  filterStatus === tab.id
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${filterStatus === tab.id
                     ? 'bg-background text-foreground font-semibold shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
@@ -140,15 +139,14 @@ export default function RankingTable({
                         <span className="font-mono text-muted-foreground text-xs">—</span>
                       ) : (
                         <span
-                          className={`font-mono text-xs font-bold px-2 py-0.5 rounded border ${
-                            item.rank === 1
+                          className={`font-mono text-xs font-bold px-2 py-0.5 rounded border ${item.rank === 1
                               ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
                               : item.rank === 2
-                              ? 'bg-zinc-500/10 text-foreground border-border'
-                              : item.rank === 3
-                              ? 'bg-amber-700/10 text-amber-700 dark:text-amber-500 border-amber-700/30'
-                              : 'text-muted-foreground border-transparent'
-                          }`}
+                                ? 'bg-zinc-500/10 text-foreground border-border'
+                                : item.rank === 3
+                                  ? 'bg-amber-700/10 text-amber-700 dark:text-amber-500 border-amber-700/30'
+                                  : 'text-muted-foreground border-transparent'
+                            }`}
                         >
                           #{item.rank}
                         </span>
@@ -224,7 +222,7 @@ export default function RankingTable({
                       ) : (
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <IconShieldCheck size={13} className="text-emerald-600 dark:text-emerald-400" />
-                          <span className="font-mono text-[11px]">{item.verified_evidence_count} Citations</span>
+                          <span className="font-mono text-[11px]">{item.verified_evidence_count ?? item.key_strengths.length} Citations</span>
                         </div>
                       )}
                     </TableCell>
