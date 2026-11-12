@@ -177,7 +177,7 @@ export default function CandidateDrawer({
             }`}
           >
             Audit & Confidence
-            {data && data.warnings.length > 0 && (
+            {data?.warnings && data.warnings.length > 0 && (
               <span className="ml-1.5 px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-mono">
                 {data.warnings.length}
               </span>
@@ -345,7 +345,7 @@ export default function CandidateDrawer({
                         <div className="p-3 rounded-lg bg-card border">
                           <span className="text-[10px] font-mono uppercase text-muted-foreground block">Total Experience</span>
                           <span className="text-base font-bold font-mono text-foreground mt-0.5 block">
-                            {data.profile.total_years_experience !== null
+                            {data.profile.total_years_experience !== null && data.profile.total_years_experience !== undefined
                               ? `${data.profile.total_years_experience} Years`
                               : 'Unknown'}
                           </span>
@@ -359,7 +359,9 @@ export default function CandidateDrawer({
                         <div className="p-3 rounded-lg bg-card border">
                           <span className="text-[10px] font-mono uppercase text-muted-foreground block">Extraction Confidence</span>
                           <span className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5 block">
-                            {(data.profile.extraction_confidence * 100).toFixed(0)}%
+                            {data.profile.extraction_confidence != null
+                              ? `${(data.profile.extraction_confidence * 100).toFixed(0)}%`
+                              : '100%'}
                           </span>
                         </div>
                       </div>
@@ -371,12 +373,12 @@ export default function CandidateDrawer({
                             Extracted Tools & Technologies
                           </span>
                           <div className="flex flex-wrap gap-1">
-                            {data.profile.tools_and_technologies.map((t, idx) => (
+                            {(data.profile.tools_and_technologies || []).map((t, idx) => (
                               <span key={idx} className="px-2 py-0.5 rounded bg-muted border text-xs font-mono text-foreground">
                                 {t}
                               </span>
                             ))}
-                            {data.profile.tools_and_technologies.length === 0 && (
+                            {(!data.profile.tools_and_technologies || data.profile.tools_and_technologies.length === 0) && (
                               <span className="text-xs text-muted-foreground">None extracted</span>
                             )}
                           </div>
@@ -387,11 +389,14 @@ export default function CandidateDrawer({
                             Skills & Domains
                           </span>
                           <div className="flex flex-wrap gap-1">
-                            {data.profile.skills.map((s, idx) => (
+                            {(data.profile.skills || []).map((s, idx) => (
                               <span key={idx} className="px-2 py-0.5 rounded bg-muted/60 border text-[11px] text-muted-foreground">
                                 {s}
                               </span>
                             ))}
+                            {(!data.profile.skills || data.profile.skills.length === 0) && (
+                              <span className="text-xs text-muted-foreground">None extracted</span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -399,10 +404,10 @@ export default function CandidateDrawer({
                       {/* Work Experience */}
                       <div className="space-y-2">
                         <span className="text-[11px] font-mono uppercase text-muted-foreground block">Employment History</span>
-                        {data.profile.work_experience.map((exp, idx) => (
+                        {(data.profile.work_experience || []).map((exp, idx) => (
                           <div key={idx} className="p-3.5 rounded-lg bg-card border space-y-1.5">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="font-semibold text-foreground">{exp.role_title}</span>
+                              <span className="font-semibold text-foreground">{exp.role_title || 'Role'}</span>
                               <span className="font-mono text-muted-foreground text-[11px]">
                                 {exp.start_date || 'N/A'} — {exp.is_current ? 'Present' : exp.end_date || 'N/A'}
                               </span>
@@ -412,19 +417,24 @@ export default function CandidateDrawer({
                             )}
                             {exp.responsibilities && exp.responsibilities.length > 0 && (
                               <ul className="list-disc list-inside text-xs text-muted-foreground space-y-0.5 pt-1">
-                                {exp.responsibilities.map((r, rIdx) => (
+                                {(exp.responsibilities || []).map((r, rIdx) => (
                                   <li key={rIdx}>{r}</li>
                                 ))}
                               </ul>
                             )}
                           </div>
                         ))}
+                        {(!data.profile.work_experience || data.profile.work_experience.length === 0) && (
+                          <div className="p-3 rounded-lg border text-xs text-muted-foreground">
+                            No employment history recorded.
+                          </div>
+                        )}
                       </div>
 
                       {/* Education */}
                       <div className="space-y-2">
                         <span className="text-[11px] font-mono uppercase text-muted-foreground block">Education</span>
-                        {data.profile.education.map((edu, idx) => (
+                        {(data.profile.education || []).map((edu, idx) => (
                           <div key={idx} className="p-3 rounded-lg bg-card border flex justify-between items-center text-xs">
                             <div>
                               <span className="font-medium text-foreground block">
@@ -437,14 +447,19 @@ export default function CandidateDrawer({
                             )}
                           </div>
                         ))}
+                        {(!data.profile.education || data.profile.education.length === 0) && (
+                          <div className="p-3 rounded-lg border text-xs text-muted-foreground">
+                            No education entries recorded.
+                          </div>
+                        )}
                       </div>
 
                       {/* Portfolio Links */}
-                      {data.profile.portfolio_links.length > 0 && (
+                      {(data.profile.portfolio_links || []).length > 0 && (
                         <div className="p-3.5 rounded-lg bg-card border space-y-1.5">
                           <span className="text-[11px] font-mono uppercase text-muted-foreground font-semibold block">Portfolio Deliverables</span>
                           <div className="space-y-1">
-                            {data.profile.portfolio_links.map((link, idx) => (
+                            {(data.profile.portfolio_links || []).map((link, idx) => (
                               <a
                                 key={idx}
                                 href={link}
@@ -473,7 +488,7 @@ export default function CandidateDrawer({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-2.5 rounded-lg bg-card border text-xs">
                     <span className="font-mono text-muted-foreground">
-                      Parser: {data.extracted_text.parser_name || 'N/A'} • Size: {(data.document.file_size / 1024).toFixed(1)} KB
+                      Parser: {data.extracted_text?.parser_name || 'N/A'} • Size: {(((data.document?.file_size || 0)) / 1024).toFixed(1)} KB
                     </span>
 
                     <div className="flex items-center gap-1 border rounded p-0.5 bg-muted">
@@ -502,8 +517,8 @@ export default function CandidateDrawer({
 
                   <div className="p-4 rounded-lg bg-muted/40 border font-mono text-[11px] text-foreground/80 max-h-[460px] overflow-y-auto whitespace-pre-wrap leading-relaxed select-text">
                     {textViewMode === 'normalized'
-                      ? data.extracted_text.normalized_text || '(Empty text)'
-                      : data.extracted_text.raw_text || '(Empty text)'}
+                      ? data.extracted_text?.normalized_text || '(Empty text)'
+                      : data.extracted_text?.raw_text || '(Empty text)'}
                   </div>
                 </div>
               )}
@@ -524,7 +539,7 @@ export default function CandidateDrawer({
                   {data.warnings && data.warnings.length > 0 ? (
                     <div className="space-y-2">
                       <span className="text-[11px] font-mono uppercase text-amber-600 dark:text-amber-400 block font-semibold">Parser Warnings</span>
-                      {data.warnings.map((w, idx) => (
+                      {(data.warnings || []).map((w, idx) => (
                         <div key={idx} className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
                           <IconAlertCircle size={14} className="shrink-0 mt-0.5 text-amber-500" />
                           <span>{w}</span>
@@ -541,7 +556,7 @@ export default function CandidateDrawer({
                   {data.profile?.unsupported_claims && data.profile.unsupported_claims.length > 0 && (
                     <div className="space-y-2 pt-2">
                       <span className="text-[11px] font-mono uppercase text-destructive block font-semibold">Unsupported Extracted Claims</span>
-                      {data.profile.unsupported_claims.map((claim, idx) => (
+                      {(data.profile.unsupported_claims || []).map((claim, idx) => (
                         <div key={idx} className="p-2.5 rounded bg-destructive/10 border border-destructive/20 text-xs text-destructive font-mono">
                           {claim}
                         </div>

@@ -68,11 +68,10 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    isActive
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive
                       ? 'bg-secondary text-secondary-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                  }`}
+                    }`}
                 >
                   <Icon size={14} className={isActive ? 'text-foreground' : 'text-muted-foreground'} />
                   {link.label}
