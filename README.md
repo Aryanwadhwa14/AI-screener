@@ -30,29 +30,24 @@ The **Rankres ATS** automates the evaluation of candidates against two distinct 
 
 The platform operates across 6 discrete, transactional pipeline stages:
 
-```
-[Raw .docx / .pdf Resumes]
-           │
-           ▼
-[Stage 1: Ingestion & Deduplication] ──── (SHA-256 Hashing, File Validation)
-           │
-           ▼
-[Stage 2: Extraction & Normalization] ─── (PyMuPDF / python-docx, OCR Adapter, Regex Normalizer)
-           │
-           ▼
-[Stage 3: Profile Extraction] ─────────── (Schema-Constrained LLM with temperature=0.0 / Fallback)
-           │
-           ▼
-[Stage 4: Evidence Cross-Referencer] ──── (Physical Substring Matcher, Provenance Verifier)
-           │
-           ▼
-[Stage 5: Deterministic Scoring Engines]  (LCARoleScorer & UIUXRoleScorer, 0-100 Mathematical Formulas)
-           │
-           ▼
-[Stage 6: 5-Tier Tie-Breaking Engine] ─── (Total Score -> Core Tool -> Experience -> Citations -> Code)
-           │
-           ▼
-[Reviewer Interface (Next.js / Shadcn)]   (Pipeline Overview, Role Rankings, 4-Tab Dossier, Live Testing)
+```mermaid
+flowchart TD
+    RAW["Raw Resumes (.docx / .pdf)"]
+    S1["Stage 1: Ingestion & Deduplication"]
+    S2["Stage 2: Extraction & Normalization"]
+    S3["Stage 3: Profile Extraction"]
+    S4["Stage 4: Evidence Cross-Referencer"]
+    S5["Stage 5: Deterministic Scoring Engines"]
+    S6["Stage 6: 5-Tier Tie-Breaking Engine"]
+    UI["Reviewer Interface (Next.js / Shadcn)"]
+
+    RAW --> S1
+    S1 -->|"SHA-256 Hashing, File Validation"| S2
+    S2 -->|"PyMuPDF / python-docx, OCR Adapter, Regex Normalizer"| S3
+    S3 -->|"Schema-Constrained LLM (temperature=0.0) / Fallback"| S4
+    S4 -->|"Physical Substring Matcher, Provenance Verifier"| S5
+    S5 -->|"LCARoleScorer & UIUXRoleScorer (0-100 Mathematical Formulas)"| S6
+    S6 -->|"Score -> Tool -> Experience -> Citations -> Code"| UI
 ```
 
 ### Stage 1: Ingestion & Content-Addressed Deduplication (`IngestionService`)
