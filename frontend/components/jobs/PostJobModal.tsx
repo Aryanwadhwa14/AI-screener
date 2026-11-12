@@ -121,13 +121,13 @@ export default function PostJobModal({ isOpen, onClose, onJobCreated }: PostJobM
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-input bg-transparent text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-8 px-2.5 rounded-md border border-input bg-background dark:bg-zinc-900 text-xs text-foreground dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="Sustainability">Sustainability</option>
-                <option value="Design">Product & Design</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Data & AI">Data & AI</option>
-                <option value="Operations">Operations</option>
+                <option value="Sustainability" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Sustainability</option>
+                <option value="Design" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Product & Design</option>
+                <option value="Engineering" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Engineering</option>
+                <option value="Data & AI" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Data & AI</option>
+                <option value="Operations" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Operations</option>
               </select>
             </div>
 
@@ -136,12 +136,12 @@ export default function PostJobModal({ isOpen, onClose, onJobCreated }: PostJobM
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-input bg-transparent text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-8 px-2.5 rounded-md border border-input bg-background dark:bg-zinc-900 text-xs text-foreground dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="Remote">Remote</option>
-                <option value="Onsite • Chennai">Onsite • Chennai</option>
-                <option value="Onsite • Bangalore">Onsite • Bangalore</option>
-                <option value="Hybrid">Hybrid</option>
+                <option value="Remote" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Remote</option>
+                <option value="Onsite • Chennai" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Onsite • Chennai</option>
+                <option value="Onsite • Bangalore" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Onsite • Bangalore</option>
+                <option value="Hybrid" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Hybrid</option>
               </select>
             </div>
           </div>
@@ -152,12 +152,12 @@ export default function PostJobModal({ isOpen, onClose, onJobCreated }: PostJobM
               <select
                 value={experienceLevel}
                 onChange={(e) => setExperienceLevel(e.target.value)}
-                className="w-full h-8 px-2.5 rounded-md border border-input bg-transparent text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-8 px-2.5 rounded-md border border-input bg-background dark:bg-zinc-900 text-xs text-foreground dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-ring"
               >
-                <option value="0–1 years">0–1 years (Entry/Intern)</option>
-                <option value="1–3 years">1–3 years (Associate)</option>
-                <option value="3–5 years">3–5 years (Mid-Senior)</option>
-                <option value="5+ years">5+ years (Lead/Principal)</option>
+                <option value="0–1 years" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">0–1 years (Entry/Intern)</option>
+                <option value="1–3 years" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">1–3 years (Associate)</option>
+                <option value="3–5 years" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">3–5 years (Mid-Senior)</option>
+                <option value="5+ years" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">5+ years (Lead/Principal)</option>
               </select>
             </div>
 

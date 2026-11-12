@@ -23,7 +23,7 @@ export default function MethodologyPage() {
         <Card className="p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
           <div className="text-xs font-semibold text-foreground">Deterministic Scoring</div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            All final scores are computed using versioned mathematical formulas in Python. Identical resume data produces identical rank every run.
+            All final scores are computed using versioned mathematical formulas. Identical resume data produces identical rank every run.
           </p>
         </Card>
 
@@ -37,7 +37,7 @@ export default function MethodologyPage() {
         <Card className="p-4 space-y-1.5 hover:border-foreground/20 transition-colors">
           <div className="text-xs font-semibold text-foreground">Neutral Unknowns</div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Empty documents receive a null score and manual-review flag (never an arbitrary 0). Unstated relocation defaults to neutral credit.
+            Empty documents receive a null score and manual-review flag. Unstated relocation defaults to neutral credit.
           </p>
         </Card>
       </div>

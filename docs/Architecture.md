@@ -24,7 +24,6 @@
 - shadcn/ui for accessible UI primitives
 - Recharts for simple dashboard analytics
 - React Hook Form + Zod for form validation where useful
-- No lucide react or any slop icons or design which makes it look like ai generated bullshit, use your own design system and make it look premium and professional. Do not use any AI icon packs, use your own custom made icons or just use text.
 
 ### Backend
 - Python 3.12+

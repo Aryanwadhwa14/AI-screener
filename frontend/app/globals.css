@@ -24,9 +24,11 @@
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
     --radius: 0.5rem;
+    color-scheme: light;
   }
 
   .dark {
+    color-scheme: dark;
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 4.9%;
@@ -57,6 +59,21 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Select element dark/light mode option styling */
+select {
+  color-scheme: light dark;
+}
+
+select option {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+.dark select option {
+  background-color: #18181b;
+  color: #fafafa;
 }
 
 /* Tabular numbers for scores and metrics */
