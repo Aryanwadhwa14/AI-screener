@@ -19,9 +19,11 @@ COPY backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy application source code
+# Copy application source code and seed files
 COPY backend/app /app/app
 COPY backend/migrations /app/migrations
+COPY backend/seed.py /app/seed.py
+COPY data /app/data
 
 # Create storage directory for local private documents fallback
 RUN mkdir -p /app/storage/resumes /app/data
