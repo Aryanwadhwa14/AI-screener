@@ -138,8 +138,8 @@ class ReviewerService:
         if not doc:
             raise ValueError(f"No document found for candidate {candidate_id}.")
 
-        # Generate signed URL for source resume inspection (expires in 600 seconds)
-        access_url = self.storage.get_signed_url(doc.storage_path, expires_in_seconds=600)
+        # Direct download/preview endpoint for source resume inspection
+        access_url = f"/api/candidates/{candidate_id}/resume"
 
         doc_meta = DocumentMeta(
             original_filename=doc.original_filename,

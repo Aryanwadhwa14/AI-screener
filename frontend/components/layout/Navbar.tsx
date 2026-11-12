@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useReviewer } from './ReviewerContext';
 import { IconUpload, IconBriefcase, IconUsers, IconLayers } from '@/components/ui/icons';
@@ -49,9 +48,6 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
         {/* Brand & ATS Nav */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 group">
-            <span className="flex items-center justify-center w-6 h-6 rounded-md bg-primary text-primary-foreground font-black text-xs tracking-tighter shadow-sm">
-              AI
-            </span>
             <div className="flex items-baseline gap-1.5">
               <span className="font-semibold text-sm tracking-tight text-foreground group-hover:opacity-80 transition-opacity">
                 Rankres
@@ -69,8 +65,8 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
                   key={link.href}
                   href={link.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive
-                      ? 'bg-secondary text-secondary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                    ? 'bg-secondary text-secondary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                     }`}
                 >
                   <Icon size={14} className={isActive ? 'text-foreground' : 'text-muted-foreground'} />
@@ -83,45 +79,7 @@ export default function Navbar({ onOpenUpload }: NavbarProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Health Indicator */}
-          <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md border bg-muted/30 text-[11px] font-mono text-muted-foreground">
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                isBackendHealthy === null
-                  ? 'bg-amber-500 animate-pulse'
-                  : isBackendHealthy
-                  ? 'bg-emerald-500'
-                  : 'bg-rose-500'
-              }`}
-            />
-            <span>
-              {isBackendHealthy === null
-                ? 'Connecting...'
-                : isBackendHealthy
-                ? 'Online'
-                : 'Offline'}
-            </span>
-          </div>
-
-          {/* Theme Toggle */}
           <ThemeToggle />
-
-          {/* Post a Job Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={openPostJobModal}
-            className="gap-1.5 font-medium"
-          >
-            <IconBriefcase size={13} />
-            <span>Post a Job</span>
-          </Button>
-
-          {/* Screen Resume CTA */}
-          <Button onClick={onOpenUpload} size="sm" className="gap-1.5 font-medium">
-            <IconUpload size={13} />
-            <span>Screen Resume</span>
-          </Button>
         </div>
       </div>
     </header>

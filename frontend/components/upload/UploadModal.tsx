@@ -4,7 +4,6 @@ import React, { useState, useRef } from 'react';
 import { api } from '@/lib/api';
 import { UploadResponse } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { IconUpload, IconClose, IconCheck, IconAlertCircle } from '@/components/ui/icons';
 
 interface UploadModalProps {
@@ -139,13 +138,12 @@ export default function UploadModal({
               onDragLeave={handleDrag}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${
-                dragActive
+              className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${dragActive
                   ? 'border-primary bg-primary/5'
                   : selectedFile
-                  ? 'border-emerald-500/80 bg-emerald-500/10'
-                  : 'border-muted-foreground/30 hover:border-foreground/50 bg-muted/20'
-              }`}
+                    ? 'border-emerald-500/80 bg-emerald-500/10'
+                    : 'border-muted-foreground/30 hover:border-foreground/50 bg-muted/20'
+                }`}
             >
               <input
                 ref={fileInputRef}
@@ -236,11 +234,10 @@ export default function UploadModal({
           /* Result Summary */
           <div className="mt-4 space-y-4">
             <div
-              className={`p-4 rounded-lg border ${
-                uploadResult.is_duplicate
+              className={`p-4 rounded-lg border ${uploadResult.is_duplicate
                   ? 'border-amber-500/40 bg-amber-500/10 text-amber-800 dark:text-amber-200'
                   : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-200'
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-xs">

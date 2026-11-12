@@ -162,7 +162,7 @@ export default function HomePage() {
             </div>
           </CardHeader>
           <CardContent className="p-4 pt-1 text-[11px] text-muted-foreground">
-            47 Resumes in pool
+            Resumes in pool
           </CardContent>
         </Card>
 

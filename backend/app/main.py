@@ -1,5 +1,7 @@
+import os
+from uuid import UUID
 from fastapi import FastAPI, HTTPException, Depends
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.schemas.health import HealthResponse
@@ -58,6 +60,54 @@ def preview_local_document(token: str, storage: StorageService = Depends(get_sto
     try:
         rel_path = storage.verify_token(token)
         full_path = storage._full_path(rel_path)
-        return FileResponse(full_path)
+        if not os.path.exists(full_path):
+            raise HTTPException(status_code=404, detail="Document file not found on disk.")
+        filename = os.path.basename(full_path)
+        media_type = "application/octet-stream"
+        if filename.lower().endswith(".pdf"):
+            media_type = "application/pdf"
+        elif filename.lower().endswith(".docx"):
+            media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        elif filename.lower().endswith(".txt"):
+            media_type = "text/plain"
+        return FileResponse(
+            full_path,
+            filename=filename,
+            media_type=media_type,
+            headers={"Content-Disposition": f'inline; filename="{filename}"'},
+        )
     except ValueError as e:
         raise HTTPException(status_code=403, detail=str(e))
+
+
+@app.get("/api/candidates/{candidate_id}/resume", summary="Download or view candidate source resume document")
+def download_candidate_resume(
+    candidate_id: UUID,
+    repo=Depends(get_repository),
+    storage: StorageService = Depends(get_storage_service),
+):
+    doc = repo.get_document_by_candidate_id(candidate_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="No resume document found for candidate.")
+    if isinstance(storage, LocalStorageService):
+        full_path = storage._full_path(doc.storage_path)
+        if not os.path.exists(full_path):
+            raise HTTPException(status_code=404, detail="Physical resume file not found on disk.")
+        filename = doc.original_filename or os.path.basename(full_path)
+        media_type = doc.mime_type or "application/octet-stream"
+        if not media_type or media_type == "application/octet-stream":
+            if filename.lower().endswith(".pdf"):
+                media_type = "application/pdf"
+            elif filename.lower().endswith(".docx"):
+                media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            elif filename.lower().endswith(".txt"):
+                media_type = "text/plain"
+        return FileResponse(
+            full_path,
+            filename=filename,
+            media_type=media_type,
+            headers={"Content-Disposition": f'inline; filename="{filename}"'},
+        )
+    else:
+        signed_url = storage.get_signed_url(doc.storage_path, expires_in_seconds=600)
+        return RedirectResponse(signed_url)

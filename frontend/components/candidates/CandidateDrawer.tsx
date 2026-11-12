@@ -122,8 +122,19 @@ export default function CandidateDrawer({
           </div>
 
           <div className="flex items-center gap-2">
-            {data && data.document?.access_url && (
-              <a href={data.document.access_url} target="_blank" rel="noreferrer">
+            {data && (data.document?.access_url || data.id) && (
+              <a
+                href={
+                  data.document?.access_url?.startsWith('http')
+                    ? data.document.access_url
+                    : data.document?.access_url
+                    ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${data.document.access_url}`
+                    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/candidates/${data.id}/resume`
+                }
+                target="_blank"
+                rel="noreferrer"
+                download
+              >
                 <Button variant="outline" size="sm" className="gap-1.5 font-mono text-xs">
                   <IconDownload size={13} />
                   <span>Resume</span>

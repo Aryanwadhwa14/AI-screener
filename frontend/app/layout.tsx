@@ -4,7 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import AppShell from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
-  title: 'ScreenAI ATS — AI Resume Screening & Evaluation Platform',
+  title: 'Rankres - AI resume screener',
   description: 'Production-grade AI candidate screening, deterministic multi-role scoring, and verifiable evidence provenance.',
 };
 
