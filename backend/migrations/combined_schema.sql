@@ -126,3 +126,4 @@ CREATE TABLE IF NOT EXISTS candidate_evaluations (
 
 CREATE INDEX IF NOT EXISTS idx_evaluations_role_score ON candidate_evaluations(role_key, score DESC NULLS LAST);
 CREATE INDEX IF NOT EXISTS idx_evaluations_candidate ON candidate_evaluations(candidate_id);
+

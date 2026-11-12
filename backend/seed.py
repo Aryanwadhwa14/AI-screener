@@ -17,8 +17,9 @@ backend_dir = Path(__file__).resolve().parent
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
 
-from app.services.database import get_repository
-from app.services.storage import get_storage_service
+from app.core.config import settings
+from app.services.database import get_repository, reset_repository_for_testing
+from app.services.storage import get_storage_service, reset_storage_for_testing
 from app.services.ingestion.ingest import IngestionService, DuplicateResumeError
 from app.services.ingestion.validator import FileValidationError
 from app.services.extraction.pipeline import ExtractionPipelineService
@@ -26,9 +27,43 @@ from app.services.extraction.profile_service import ProfileExtractionService
 from app.services.scoring.service import EvaluationService
 
 
-def run_seeding(reset_db: bool = False, data_dir: str = "data"):
+def run_seeding(
+    reset_db: bool = False,
+    data_dir: str = "data",
+    supabase_url: str = None,
+    supabase_key: str = None,
+):
     print("=" * 70)
     print("  Rankres ATS — Deterministic Pipeline Seeding & Scoring Engine")
+    print("=" * 70)
+
+    if supabase_url:
+        settings.supabase_url = supabase_url
+        os.environ["SUPABASE_URL"] = supabase_url
+    if supabase_key:
+        settings.supabase_service_role_key = supabase_key
+        os.environ["SUPABASE_SERVICE_ROLE_KEY"] = supabase_key
+
+    # Reset singletons if credentials were provided
+    if supabase_url or supabase_key:
+        reset_repository_for_testing(None)
+        reset_storage_for_testing(None)
+
+    repo = get_repository()
+    storage = get_storage_service()
+
+    backend_type = (
+        "Cloud Supabase PostgreSQL"
+        if "supabase" in type(repo).__name__.lower()
+        else "Local SQLite"
+    )
+    storage_type = (
+        "Cloud Supabase Bucket"
+        if "supabase" in type(storage).__name__.lower()
+        else "Local Filesystem"
+    )
+    print(f"  Target Database : {backend_type}")
+    print(f"  Target Storage  : {storage_type}")
     print("=" * 70)
 
     # Resolve repo root and data dir
@@ -37,16 +72,17 @@ def run_seeding(reset_db: bool = False, data_dir: str = "data"):
     db_file = os.path.join(repo_root, "data", "app.db")
 
     if reset_db:
-        print(f"\n[RESET] Removing existing database at {db_file}...")
-        if os.path.exists(db_file):
-            try:
-                os.remove(db_file)
-                print("  -> Database removed successfully.")
-            except Exception as e:
-                print(f"  -> Warning: Could not remove db file: {e}")
+        if "sqlite" in type(repo).__name__.lower():
+            print(f"\n[RESET] Removing local SQLite database at {db_file}...")
+            if os.path.exists(db_file):
+                try:
+                    os.remove(db_file)
+                    print("  -> Database removed successfully.")
+                except Exception as e:
+                    print(f"  -> Warning: Could not remove db file: {e}")
+        else:
+            print("\n[RESET] Note: Connected to Supabase. Seeding will upsert records.")
 
-    repo = get_repository()
-    storage = get_storage_service()
     ingestion = IngestionService(repository=repo, storage_service=storage)
     extraction = ExtractionPipelineService(repository=repo, storage_service=storage)
     profiling = ProfileExtractionService(repository=repo, storage_service=storage)
@@ -140,8 +176,15 @@ def run_seeding(reset_db: bool = False, data_dir: str = "data"):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Seed and evaluate candidate resumes.")
-    parser.add_argument("--reset", action="store_true", help="Reset SQLite database before seeding")
+    parser.add_argument("--reset", action="store_true", help="Reset database before seeding")
     parser.add_argument("--data-dir", default="data", help="Directory containing resumes")
+    parser.add_argument("--supabase-url", help="Supabase Project URL (e.g. https://xxx.supabase.co)")
+    parser.add_argument("--supabase-key", help="Supabase service_role secret key")
     args = parser.parse_args()
 
-    run_seeding(reset_db=args.reset, data_dir=args.data_dir)
+    run_seeding(
+        reset_db=args.reset,
+        data_dir=args.data_dir,
+        supabase_url=args.supabase_url,
+        supabase_key=args.supabase_key,
+    )
