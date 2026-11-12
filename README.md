@@ -31,23 +31,100 @@ The **Rankres ATS** automates the evaluation of candidates against two distinct 
 The platform operates across 6 discrete, transactional pipeline stages:
 
 ```mermaid
-flowchart TD
-    RAW["Raw Resumes (.docx / .pdf)"]
-    S1["Stage 1: Ingestion & Deduplication"]
-    S2["Stage 2: Extraction & Normalization"]
-    S3["Stage 3: Profile Extraction"]
-    S4["Stage 4: Evidence Cross-Referencer"]
-    S5["Stage 5: Deterministic Scoring Engines"]
-    S6["Stage 6: 5-Tier Tie-Breaking Engine"]
-    UI["Reviewer Interface (Next.js / Shadcn)"]
+flowchart TB
+    subgraph CLIENT["1. Presentation Layer (Next.js 14 App Router + Shadcn UI)"]
+        BROWSER["HR Reviewer / Recruiter Browser"]
+        NEXT_APP["Next.js Application (Port 3000)"]
+        DRAWER["Candidate Dossier Drawer (4 Tabs: Scoring, Profile, Text, Audit)"]
+        TABLES["Role Rankings & Pipeline Tables (Filter, Search, Sort)"]
+        UPLOAD_MODAL["Resume Upload Modal (Drag-and-Drop Dropzone)"]
+        JOB_MODAL["Requisition Creator (Post a Job Modal)"]
+        NEXT_PROXY["Next.js Reverse Proxy (/api/* Rewrites)"]
 
-    RAW --> S1
-    S1 -->|"SHA-256 Hashing, File Validation"| S2
-    S2 -->|"PyMuPDF / python-docx, OCR Adapter, Regex Normalizer"| S3
-    S3 -->|"Schema-Constrained LLM (temperature=0.0) / Fallback"| S4
-    S4 -->|"Physical Substring Matcher, Provenance Verifier"| S5
-    S5 -->|"LCARoleScorer & UIUXRoleScorer (0-100 Mathematical Formulas)"| S6
-    S6 -->|"Score -> Tool -> Experience -> Citations -> Code"| UI
+        BROWSER --> NEXT_APP
+        NEXT_APP --- DRAWER
+        NEXT_APP --- TABLES
+        NEXT_APP --- UPLOAD_MODAL
+        NEXT_APP --- JOB_MODAL
+        NEXT_APP --> NEXT_PROXY
+    end
+
+    subgraph API["2. Gateway & API Layer (FastAPI + Uvicorn)"]
+        FASTAPI["FastAPI Production Server (Port 8000)"]
+        CORS["CORS Middleware & Healthcheck (/api/health)"]
+        RESUME_ROUTER["Resume Router (/api/resumes)"]
+        CAND_ROUTER["Candidate Router (/api/candidates)"]
+        EVAL_ROUTER["Evaluation Router (/api/evaluations)"]
+        RANK_ROUTER["Ranking Router (/api/rankings)"]
+
+        NEXT_PROXY -->|"HTTP / REST API"| FASTAPI
+        FASTAPI --> CORS
+        FASTAPI --> RESUME_ROUTER
+        FASTAPI --> CAND_ROUTER
+        FASTAPI --> EVAL_ROUTER
+        FASTAPI --> RANK_ROUTER
+    end
+
+    subgraph SERVICES["3. Core Processing & Intelligence Services"]
+        INGEST["Ingestion Service (SHA-256 Deduplication, MIME Check)"]
+        EXTRACT["Extraction Pipeline (PyMuPDF & python-docx Parsers)"]
+        NORM["Text Normalizer (Unicode Ligatures, Whitespace Clean)"]
+
+        subgraph AI_EXTRACTION["Extraction & Evidence Grounding"]
+            PROFILE_SVC["Profile Extraction Service"]
+            GEMINI["Google Gemini 2.0 Flash (temp=0.0, JSON Schema)"]
+            MOCK_LLM["Deterministic Fallback Engine (Offline Regex)"]
+            VERIFIER["Evidence Verifier (Physical Provenance Cross-Referencer)"]
+        end
+
+        subgraph SCORING["Deterministic Scoring & Ranking Engine"]
+            EVALUATOR["Candidate Evaluator (0-100 Weighted Formulas)"]
+            LCA_SCORER["LCA Role Scorer (GaBi/SimaPro, ISO 14040/14044, Onsite)"]
+            UIUX_SCORER["UI/UX Role Scorer (Figma, Research, Cognitive Psych)"]
+            TIE_BREAKER["5-Tier Deterministic Tie-Breaking Engine"]
+        end
+
+        RESUME_ROUTER --> INGEST
+        INGEST --> EXTRACT
+        EXTRACT --> NORM
+        NORM --> PROFILE_SVC
+
+        PROFILE_SVC -->|"Primary API"| GEMINI
+        PROFILE_SVC -->|"Offline Mode"| MOCK_LLM
+        GEMINI --> VERIFIER
+        MOCK_LLM --> VERIFIER
+
+        CAND_ROUTER --> EVALUATOR
+        EVAL_ROUTER --> EVALUATOR
+        RANK_ROUTER --> TIE_BREAKER
+
+        VERIFIER --> EVALUATOR
+        EVALUATOR --> LCA_SCORER
+        EVALUATOR --> UIUX_SCORER
+        LCA_SCORER --> TIE_BREAKER
+        UIUX_SCORER --> TIE_BREAKER
+    end
+
+    subgraph STORAGE["4. Persistence & Storage Layer"]
+        REPO_ADAPTER["Repository Adapter (BaseRepository)"]
+        STORAGE_ADAPTER["Storage Adapter (BaseStorageService)"]
+
+        SQLITE[("SQLite Database (data/app.db)")]
+        SUPABASE_DB[("Optional Cloud Supabase PostgreSQL")]
+        LOCAL_STORAGE[("Local File Storage (data/storage/resumes/)")]
+        SUPABASE_BUCKET[("Optional Cloud Supabase Bucket")]
+
+        REPO_ADAPTER --> SQLITE
+        REPO_ADAPTER -.-> SUPABASE_DB
+        STORAGE_ADAPTER --> LOCAL_STORAGE
+        STORAGE_ADAPTER -.-> SUPABASE_BUCKET
+    end
+
+    INGEST -->|"Store File"| STORAGE_ADAPTER
+    CAND_ROUTER -->|"Stream / Download"| STORAGE_ADAPTER
+    VERIFIER -->|"Persist Profile & Evidence"| REPO_ADAPTER
+    EVALUATOR -->|"Persist Evaluations"| REPO_ADAPTER
+    TIE_BREAKER -->|"Query Ranked Results"| REPO_ADAPTER
 ```
 
 ### Stage 1: Ingestion & Content-Addressed Deduplication (`IngestionService`)
